@@ -11,14 +11,13 @@ After installing Python, pip, and pipenv, run the following commands to setup th
 ```bash
 git clone repository
 cd path/to/repository
-pipenv install //this will create a virtual env and install all the dependancies in the Pipfile which are needed for the script
+pipenv install //this will create a virtual env and install all the dependancies from the Pipfile which are needed for the script
 ```
-
 
 # Usage
 After the Python environment is setup, you can run the script with the following command. You sohuld be in the folder where you cloned the repo when running the following.
 ```bash
-pipenv run example_authenticate.py
+pipenv run python example_authenticate.py
 ```
 
 ## Required Information
