@@ -28,4 +28,5 @@ if __name__ == '__main__':
         auth.add_cf_auth_header(cf_token)
     auth.handle_auth()
     
-    print("\nStart Script Here")
+    # Starting from this authentication example, you can now start your script and call other endpoints
+    # Pass in the `auth.auth_headers` as the headers for any API requests
