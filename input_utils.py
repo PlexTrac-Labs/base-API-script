@@ -79,8 +79,10 @@ def prompt_retry(msg):
 
 
 # prompts user for their plextrac url, checks that the API is up and running, then returns the url
-def handle_instance_url():
-    base_url = prompt_user("Please enter the full URL of your PlexTrac instance (with protocol)")
+def handle_instance_url(args):
+    base_url = args.get('instance_url')
+    if base_url == None:
+        base_url = prompt_user("Please enter the full URL of your PlexTrac instance (with protocol)")
 
     #validate
     try:
@@ -96,24 +98,29 @@ def handle_instance_url():
                     "cf_token": None
                 }
         except Exception as e: # potential plextrac internal instance running behind Cloudflare
-            option = prompt_user_options("That URL points to a running verson of Plextrac. However, the API did not respond.\nThere might be an additional layer of security. Try adding Cloudflare auth token?", "Do you want to try adding a Cloudflare token?", ['y', 'n'])    
-            if option == 'y':
-                return handle_cf_instance_url(base_url)
+            if args.get('cf_token') == None:
+                option = prompt_user_options("That URL points to a running verson of Plextrac. However, the API did not respond.\nThere might be an additional layer of security. Try adding Cloudflare auth token?", "Do you want to try adding a Cloudflare token?", ['y', 'n'])    
+                if option == 'y':
+                    return handle_cf_instance_url(args, base_url)
+            else:
+                return handle_cf_instance_url(args, base_url, cf_token=args.get('cf_token'))
             
             if prompt_retry("Could not validate instance URL."):
-                return handle_instance_url()
+                return handle_instance_url(args)
 
 
     except Exception as e:
-        # print("Exception: ", e)
+        print("Exception: ", e)
         if prompt_retry("Could not validate URL. Either the API is offline or it was entered incorrectly\nExample: https://company.plextrac.com"):
             return handle_instance_url()
 
 
 # handles extra layer of Cloudflare authorization
 # plextrac test instances are hosted behind a Cloudflare wall that requires another layer of authorization
-def handle_cf_instance_url(base_url):
-    cf_token = prompt_user("Please enter your active 'CF_Authorization' token")
+def handle_cf_instance_url(args, base_url, cf_token=None):
+    if cf_token == None:
+        cf_token = prompt_user("Please enter your active 'CF_Authorization' token")
+
     response = requests.get(f'{base_url}/api/v1/', headers={"cf-access-token": cf_token}) # could be refractored to use request utils
             
     try:
@@ -127,7 +134,7 @@ def handle_cf_instance_url(base_url):
             }
     except Exception as e:
         if prompt_retry("Could not validate instance URL."):
-            return handle_instance_url()
+            return handle_instance_url(args)
 
 
 # gets the file path of a json to be imported, checks if the file exists, and trys to load and return the data

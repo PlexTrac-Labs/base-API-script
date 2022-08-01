@@ -1,0 +1,8 @@
+# instance_url should be Plextrac instance URL i.e. https://example.plextrac.com
+instance_url: 
+username: 
+password: 
+
+
+# Token for an extra layer of Cloudflare security that is present on internal Plextrac test instances
+# cf_token: 
