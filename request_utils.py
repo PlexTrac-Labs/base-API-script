@@ -134,7 +134,7 @@ def request_delete(base_url, request_root, request_path, request_name, headers):
         exit()
 
 
-# list of endpoints - keeps like data together, used for having a static place for root and path
+# list of endpoints - keeps like data together, tatic place for root and path info
 def request_authenticate(base_url, headers, payload):
     name = "Authenticate"
     root = "/api/v1"

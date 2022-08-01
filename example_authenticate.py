@@ -25,18 +25,13 @@ if __name__ == '__main__':
     with open("config.yaml", 'r') as f:
         args = yaml.safe_load(f)
 
-    username = args.get('username')
-    password = args.get('password')
+    auth = Auth(args)
+    auth.handle_authentication()
     
-    base_url, cf_token = itemgetter('base_url', 'cf_token')(handle_instance_url(args))
 
-    auth = Auth(base_url)
-    if cf_token != None:
-        auth.add_cf_auth_header(cf_token)
-    auth.username = username
-    auth.password = password
-    
-    auth.handle_auth()
-    
-    # Starting from this authentication example, you can now start your script and call other endpoints
-    # Pass in the `auth.auth_headers` as the headers for any API requests
+    # Starting from this authentication example, you can now build out your script and call other endpoints
+
+
+    # Authorization verification is built in through the get_auth_headers() method
+    # After the 2 lines above setting up the auth object, `auth.get_auth_headers()' will return the headers needed to add to any API calls
+    print("\nCompleted with auth_headers: ", auth.get_auth_headers())
