@@ -153,3 +153,30 @@ def handle_load_json_data(msg):
             return handle_load_json_data(msg)
     
     return json_data
+
+
+# gets the file path of a csv to be imported, checks if the file exists, and trys to load and return the data
+def handle_load_csv_data(msg):
+    csv_file_path = prompt_user(msg + " (relative file path, including file extention)")
+
+    if not os.path.exists(csv_file_path):
+        if prompt_retry(f'Specified CSV file at \'{csv_file_path}\' does not exist.'):
+            return handle_load_csv_data(msg)
+    
+    csv_headers = []
+    csv_data = []
+
+    try:
+        with open(csv_file_path, 'r', newline='', encoding='utf-8') as f:
+            reader = csv.reader(f)
+            for row in reader:
+                if csv_headers == []:
+                    csv_headers = row
+
+                csv_data.append(row)
+
+    except Exception as e:
+        if prompt_retry(f'Error loading file: {e}'):
+            return handle_load_csv_data(msg)
+    
+    return csv_headers, csv_data

@@ -46,7 +46,7 @@ def request_get(base_url, request_root, request_path, request_name, headers):
         return response_json
         
     except Exception as e:
-        err_requests_general(request_name, "GET", request_path)
+        err_requests_general(request_name, "GET", request_path, e)
         exit()
 
 
@@ -74,7 +74,7 @@ def request_post(base_url, request_root, request_path, request_name, headers, pa
         return response_json
         
     except Exception as e:
-        err_requests_general(request_name, "POST", request_path)
+        err_requests_general(request_name, "POST", request_path, e)
         exit()
 
 
@@ -102,7 +102,7 @@ def request_put(base_url, request_root, request_path, request_name, headers, pay
         return response_json
         
     except Exception as e:
-        err_requests_general(request_name, "PUT", request_path)
+        err_requests_general(request_name, "PUT", request_path, e)
         exit()
         
 
@@ -130,7 +130,7 @@ def request_delete(base_url, request_root, request_path, request_name, headers):
         return response_json
         
     except Exception as e:
-        err_requests_general(request_name, "POST", request_path)
+        err_requests_general(request_name, "POST", request_path, e)
         exit()
 
 
