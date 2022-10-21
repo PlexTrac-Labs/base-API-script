@@ -1,0 +1,7 @@
+# instance_url should be Plextrac instance URL i.e. https://example.plextrac.com
+instance_url: 
+username: 
+password: 
+
+csv_headers_file_path: header_mapping.csv
+csv_data_file_path: 
