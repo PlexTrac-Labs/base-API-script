@@ -22,7 +22,7 @@ To import a CSV with data, you must create a mapping to tell the script where th
 - Make a copy of the csv file with the data you want to import.
 - Rename the copy to `header_mapping.csv`. If you choose a different file name you will need to update the `csv_headers_file_path` value in the `config.yaml` file.
 - Open the `header_mapping.csv` and delete all rows except the header row.
-- In the second row, for each column you want to import, add a location key. See details for location keys in the file below.
+- In the second row, for each column you want to import, add a location key. See [Location Key List.ods](https://github.com/pgreen-ptrac/general-csv-import/files/9842592/Location.Key.List.ods) for list of available keys and descriptions.
 - Move this file to the main directory where you cloned this repo. If you place it in a different directory you will need to update the `csv_headers_file_path` value in the `config.yaml` file.
 
 ## Credentials
