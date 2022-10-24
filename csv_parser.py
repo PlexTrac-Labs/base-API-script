@@ -2,6 +2,8 @@ import time
 import csv
 from uuid import uuid4
 from copy import copy, deepcopy
+import logging
+import re
 
 import general_utils as utils
 from input_utils import *
@@ -360,7 +362,7 @@ class Parser():
     # you can add data here that should be added to all clients
     client_template = { # need all arrays build out to prevent KEY ERR when adding data
         "sid": None,
-        "name": f'Custom CSV Import {time.strftime("%m/%d/%Y", time.localtime(time.time()))}',
+        "name": f'Custom CSV Import Blank',
         "tags": ["custom_csv_import"],
         "description": "Client for custom csv import script findings. This Client was created because there was no client_name key mapped in the data to be imported.",
         "assets": [],
@@ -524,7 +526,25 @@ class Parser():
         self.csv_data = None
         self.logging_data = None
         self.parser_progess = None
-        self.LOGS_FILE_PATH = f'parser_logs_{time.strftime("%Y_%m_%d_%H_%M_%S", time.localtime(time.time()))}.csv'
+        self.parser_date = time.strftime("%m/%d/%Y", time.localtime(time.time()))
+        self.parser_time = time.strftime("%Y_%m_%d_%H_%M_%S", time.localtime(time.time()))
+
+        self.client_template['name'] = f'Custom CSV Import {self.parser_date}'
+
+        # csv logging
+        self.CSV_LOGS_FILE_PATH = f'parser_logs_{self.parser_time}.csv'
+        # txt logging
+        self.LOGS_FILE_PATH = f'logs_{self.parser_time}.txt'
+        self.log = logging
+        self.log.basicConfig(
+            level=self.log.INFO,
+            format="%(asctime)s [%(levelname)s] %(message)s",
+            handlers=[
+                self.log.FileHandler(self.LOGS_FILE_PATH),
+                self.log.StreamHandler()
+            ]
+        )
+
 
 
     #----------getters and setter----------
@@ -569,7 +589,7 @@ class Parser():
         """
         print("Creating log file...")
         try:
-            with open(self.LOGS_FILE_PATH, mode='w', encoding="utf8") as file:
+            with open(self.CSV_LOGS_FILE_PATH, mode='w', encoding="utf8") as file:
                 writer = csv.writer(file)
                 header_row = self.get_csv_headers()
                 header_row.append("Parser Logs")
@@ -582,7 +602,7 @@ class Parser():
                         row.append("")
                     writer.writerow(row)
 
-                print(f'Info: Logs will be saved to \'{self.LOGS_FILE_PATH}\'')
+                print(f'Info: Logs will be saved to \'{self.CSV_LOGS_FILE_PATH}\'')
         except Exception as e:
             print(f'Error setting up log file: {e}')
 
@@ -597,7 +617,7 @@ class Parser():
         """
         i = self.parser_progess
         try:
-            with open(self.LOGS_FILE_PATH, mode='r', encoding="utf8") as file:
+            with open(self.CSV_LOGS_FILE_PATH, mode='r', encoding="utf8") as file:
                 reader = csv.reader(file)
                 temp_csv_data = []
                 for row in reader:
@@ -609,7 +629,7 @@ class Parser():
                     new_log = f'{new_log}\n{e}'
                 temp_csv_data[i+1][len(self.data_mapping)] = f'{temp_csv_data[i+1][len(self.data_mapping)]}\n{new_log}'
 
-            with open(self.LOGS_FILE_PATH, mode='w', encoding="utf8") as file:
+            with open(self.CSV_LOGS_FILE_PATH, mode='w', encoding="utf8") as file:
                 writer = csv.writer(file)
                 writer.writerows(temp_csv_data)
             
@@ -618,12 +638,12 @@ class Parser():
 
     
     def display_parser_results(self):
-        print(f'\n\nImport completed! Successfully imported {self.log_messages["SUCCESS"]["num"]}/{len(self.csv_data)} findings.\n')
+        print(f'\n\nImport completed!') # Successfully imported {self.log_messages["SUCCESS"]["num"]}/{len(self.csv_data)} findings.\n')
         
-        for log in self.log_messages.values():
-            if log['num'] > 0:
+        # for log in self.log_messages.values():
+        #     if log['num'] > 0:
 
-                print(f'{log["num"]} {log["message"]}.')
+        #         print(f'{log["num"]} {log["message"]}.')
 
         print(f'\nDetailed logs can be found in \'{self.LOGS_FILE_PATH}\'')
     #----------End logging functions----------
@@ -681,7 +701,7 @@ class Parser():
         # filter for matching clients
         header = self.get_header_from_key("client_name")
         if header == None:
-            matching_clients = list(filter(lambda x: ("Blank" in str(x['name'])), self.clients.values()))
+            matching_clients = list(filter(lambda x: (f'Custom CSV Import {self.parser_date}' == str(x['name'])), self.clients.values()))
         else:
             index = list(self.csv_headers_mapping.keys()).index(header)
             value = row[index]
@@ -691,11 +711,11 @@ class Parser():
         # return matched client
         if len(matching_clients) > 0:
             client = matching_clients[0]
-            print(f'INFO: Found existing client {client["name"]}')
+            self.log.info(f'INFO: Found existing client {client["name"]}')
             return client['sid'], client['name']
 
         # return new client
-        print(f'INFO: No client found. Creating new client...')
+        self.log.info(f'INFO: No client found. Creating new client...')
         new_sid = uuid4()
         client = deepcopy(self.client_template)
         client['sid'] = new_sid
@@ -724,7 +744,7 @@ class Parser():
         if header == None:
             matching_reports = self.reports.values()
             matching_reports = filter(lambda x: (x['client_sid'] == client_sid), matching_reports)
-            matching_reports = list(filter(lambda x: ("Blank" in str(x['name'])), matching_reports))
+            matching_reports = list(filter(lambda x: ("Report" in str(x['name'])), matching_reports))
         else:
             index = list(self.csv_headers_mapping.keys()).index(header)
             value = row[index]
@@ -736,11 +756,11 @@ class Parser():
         # return matched report
         if len(matching_reports) > 0:
             report = matching_reports[0]
-            print(f'INFO: Found existing report {report["name"]}')
+            self.log.info(f'INFO: Found existing report {report["name"]}')
             return report['sid'], report['name']
 
         # return new report
-        print(f'INFO: No report found. Creating new report...')
+        self.log.info(f'INFO: No report found. Creating new report...')
         new_sid = uuid4()
         report = deepcopy(self.report_template)
         report['sid'] = new_sid
@@ -771,14 +791,9 @@ class Parser():
 
         # filter for matching findings by title
         header = self.get_header_from_key('finding_title')
-        if header == None:
-            print(f'ERR: Did not map "finding_title" to any csv headers" Cannot process findings. Exiting...')
-            exit()
 
         index = list(self.csv_headers_mapping.keys()).index(header)
         value = row[index]
-        if value == "":
-            return None, None
 
         matching_findings = list(filter(lambda x: (value == x['title']), matching_findings))
 
@@ -920,13 +935,13 @@ class Parser():
         path = mapping['path']
 
         if mapping['validation_type'] == "DATE_ZULU":
-            raw_date = utils.try_parsing_date(value, header)
+            raw_date = utils.try_parsing_date(self.log, value, header)
             if raw_date != None:
                 self.set_value(obj, path, time.strftime("%Y-%m-%dT08:00:00.000000Z", raw_date))
                 return
 
         if mapping['validation_type'] == "DATE_EPOCH":
-            raw_date = utils.try_parsing_date(value, header)
+            raw_date = utils.try_parsing_date(self.log, value, header)
             if raw_date != None:
                 self.set_value(obj, path, int(time.mktime(raw_date)*1000))
                 return
@@ -934,24 +949,33 @@ class Parser():
         if mapping['validation_type'] == "SEVERITY":
             severities = ["Critical", "High", "Medium", "Low", "Informational"]
             if value not in severities:
+                self.log.exception(f'Header "{header}" value "{value}" is not a valid severity. Must be in the list ["Critical", "High", "Medium", "Low", "Informational"] Skipping...')
                 return
 
         if mapping['validation_type'] == "STATUS":
             statuses = ["Open", "In Process", "Closed"]
             if value not in statuses:
+                self.log.exception(f'Header "{header}" value "{value}" is not a valid status. Must be in the list ["Open", "In Process", "Closed"] Skipping...')
                 return
 
         if mapping['validation_type'] == "ASSET_TYPE":
             types = ["Workstation", "Server", "Network Device", "Application", "General"]
             if value not in types:
+                self.log.exception(f'Header "{header}" value "{value}" is not a valid asset type. Must be in the list ["Workstation", "Server", "Network Device", "Application", "General"] Skipping...')
                 return
 
         if mapping['validation_type'] == "FLOAT":
-            self.set_value(obj, path, float(value))
+            try:
+                self.set_value(obj, path, float(value))
+            except ValueError:
+                self.log.exception(f'Header "{header}" value "{value}" is not a valid number. Skipping...')
             return
 
         if mapping['validation_type'] == "BOOL":
-            self.set_value(obj, path, bool(value))
+            try:
+                self.set_value(obj, path, bool(value))
+            except ValueError:
+                self.log.exception(f'Header "{header}" value "{value}" cannot be converted to a boolean. Skipping...')
             return
         
         self.set_value(obj, path, str(value))
@@ -998,25 +1022,36 @@ class Parser():
 
     # finding cve
     def add_cve(self, header, obj, mapping, value):
-        values = value.split("-")
-        cve= {
-            "name": "value",
-            "year": int(values[1]),
-            "id": int(values[2]),
-            "link": f'https://www.cve.org/CVERecord?id={value}'
-        }
+        cves = value.split(",")
+        for cve in cves:
+            values = cve.strip().split("-")
+            try:
+                data= {
+                    "name": "value",
+                    "year": int(values[1]),
+                    "id": int(values[2]),
+                    "link": f'https://www.cve.org/CVERecord?id={value}'
+                }
 
-        self.set_value(obj, mapping['path'], cve)
+                self.set_value(obj, mapping['path'], data)
+            except ValueError:
+                self.log.exception(f'Header "{header}" value "{value}" is not a list of valid CVE IDs. Expects "CVE-2022-12345" or "CVE-2022-12345, CVE-2022-67890" Skipping...')
 
     # finding cwe
     def add_cwe(self, header, obj, mapping, value):
-        cwe = {
-            "name": f'CWE-{value}',
-            "id": int(value),
-            "link": f'https://cwe.mitre.org/data/definitions/{value}.html'
-        }
+        cwes = value.split(",")
+        for cwe in cwes:
+            cwe = cwe.strip()
+            try:
+                data = {
+                    "name": f'CWE-{cwe}',
+                    "id": int(cwe),
+                    "link": f'https://cwe.mitre.org/data/definitions/{cwe}.html'
+                }
 
-        self.set_value(obj, mapping['path'], cwe)
+                self.set_value(obj, mapping['path'], data)
+            except ValueError:
+                self.log.exception(f'Header "{header}" value "{value}" is not a list of valid CWE numbers. Expects "123" or "123, 456" Skipping...')
 
     # list (asset known ips, operating systems)
     def add_list(self, header, obj, mapping, value):
@@ -1055,13 +1090,12 @@ class Parser():
         for index, header in enumerate(self.csv_headers_mapping):
             data_mapping_key = self.get_key_from_header(header)
             if data_mapping_key == None:
-                # TODO log csv header not mapped
+                self.log.debug(f'CSV header "{header}" not mapped with a location key. Skipping {header}...')
                 continue
 
             data_mapping = self.data_mapping.get(data_mapping_key)
             if data_mapping == None:
-                print(f'WARN: No Plextrac mapping for <{data_mapping_key}>, was it typed incorrectly? Ignoring...')
-                # TODO log invalid key choosen for mapping
+                self.log.exception(f'No Plextrac mapping for <{data_mapping_key}>, was it typed incorrectly? Ignoring...')
                 continue
 
             # only loop through the field for hte correct obj type
@@ -1107,12 +1141,18 @@ class Parser():
         """
         # query csv row for client specific info and create or choose client
         client_sid, client_name = self.handle_client(row)
+        if client_sid == None:
+            return
 
         # query csv row for report specific data and creaate or choose report
-        report_sid, report_name = self.handle_report(row, client_sid)        
+        report_sid, report_name = self.handle_report(row, client_sid)   
+        if report_sid == None:
+            return     
         
         # query csv row for finding specific data and create finding
         finding_sid, finding_name = self.handle_finding(row, client_sid, report_sid)
+        if finding_sid == None:
+            return
 
         self.handle_multi_asset(row, client_sid, finding_sid)
 
@@ -1127,31 +1167,43 @@ class Parser():
         """
         Top level parsing controller. Loops through loaded csv, gathers required data, calls function to process data.
 
-        Creates and sets up logging file
+        Creates and sets up csv logging file
         Determine where to look for finding name (needed to verify each row contains a finding)
         Loop through csv findings
         - Verfiy row contains finding
         - Call to process finding
         """
-        self.create_log_file()
+        # self.create_log_file()
 
         # get index of 'name' obj in self.data_mapping - this will be the index to point us to the name column in the csv
-        csv_finding_title_index = list(self.csv_headers_mapping.values()).index('finding_title')
+        try:
+            csv_finding_title_index = list(self.csv_headers_mapping.values()).index('finding_title')
+        except ValueError:
+            self.log.critical(f'Did not map "finding_title" key to any csv headers. Cannot process CSV. Exiting...')
+            exit()
 
+        print(f'---Beginning CSV parsing---')
         self.parser_progess = 0
         for row in self.csv_data:
-            print(f'\n=======Parsing Finding {self.parser_progess+1}=======')
+            self.log.info(f'=======Parsing Finding {self.parser_progess+1}=======')
 
             # checking if current row contains a finding since the csv could have rows that extend beyond finding data
-            if row[csv_finding_title_index] != "":
-                vuln_name = row[csv_finding_title_index]
-                print(f'---{vuln_name}---')
-                self.parser_row(row)
+            if row[csv_finding_title_index] == "":
+                self.log.info(f'Row {self.parser_progess+2} in the CSV did not have a value for the finding_title. Skipping...')
+                continue
+            
+            vuln_name = row[csv_finding_title_index]
+            self.log.info(f'---{vuln_name}---')
+            self.parser_row(row)
 
             self.parser_progess += 1
-            print(f'=======End {vuln_name}=======')
+            self.log.info(f'=======End {vuln_name}=======')
+
+            # if self.parser_progess == 150:
+            #     break
 
         # post parsing processing
+        print(f'\n---Post parsing proccessing---')
         self.handle_finding_dup_names()
 
 
@@ -1167,19 +1219,19 @@ class Parser():
             payload.pop("assets")
             payload.pop("reports")
             payload.pop("sid")
-            print(f'INFO: Creating client <{payload["name"]}>')
+            self.log.info(f'INFO: Creating client <{payload["name"]}>')
             response = request_create_client(auth.base_url, auth.get_auth_headers(), payload)
             if response.get("status") != "success":
-                print(f'ERR: Could not create client. Skipping all reports and findings under this client...')
+                self.log.error(f'ERR: Could not create client. Skipping all reports and findings under this client...')
                 continue
-            print(f'Successfully created client!')
+            self.log.info(f'Successfully created client!')
             client_id = response.get("client_id")
 
             # client assets
             for asset_sid in client['assets']:
                 asset = self.assets[asset_sid]
                 if asset['original_asset_sid'] != None:
-                    print(f'INFO: Found existing asset <{asset["asset"]}>')
+                    self.log.info(f'INFO: Found existing asset <{asset["asset"]}>')
                     asset['asset_id'] = self.assets[asset['original_asset_sid']]['asset_id']
                     continue
 
@@ -1189,12 +1241,12 @@ class Parser():
                 payload.pop("finding_sid")
                 payload.pop("dup_num")
                 payload.pop("is_multi")
-                print(f'INFO: Creating asset <{payload["asset"]}>')
+                self.log.info(f'INFO: Creating asset <{payload["asset"]}>')
                 response = request_create_asset(auth.base_url, auth.get_auth_headers(), payload, client_id)
                 if response.get("message") != "success":
-                    print(f'ERR: Could not create asset. Skipping...')
+                    self.log.error(f'ERR: Could not create asset. Skipping...')
                     continue
-                print(f'Successfully created asset!')
+                self.log.info(f'Successfully created asset!')
                 asset['asset_id'] = response.get("id")
 
             # reports
@@ -1203,12 +1255,12 @@ class Parser():
                 payload.pop("findings")
                 payload.pop("sid")
                 payload.pop("client_sid")
-                print(f'INFO: Creating report <{payload["name"]}>')
+                self.log.info(f'INFO: Creating report <{payload["name"]}>')
                 response = request_create_report(auth.base_url, auth.get_auth_headers(), payload, client_id)
                 if response.get("message") != "success":
-                    print(f'ERR: Could not create report. Skipping all findings under this report...')
+                    self.log.error(f'ERR: Could not create report. Skipping all findings under this report...')
                     continue
-                print(f'Successfully created report!')
+                self.log.info(f'Successfully created report!')
                 report_id = response.get("report_id")
 
                 # findings
@@ -1220,24 +1272,26 @@ class Parser():
                     payload.pop("client_sid")
                     payload.pop("report_sid")
                     payload.pop("affected_asset_sid")
-                    payload.pop("vulnerability_sid")
-                    print(f'INFO: Creating finding <{payload["title"]}>')
+                    self.log.info(f'INFO: Creating finding <{payload["title"]}>')
                     response = request_create_finding(auth.base_url, auth.get_auth_headers(), payload, client_id, report_id)
                     if response.get("message") != "success":
-                        print(f'ERR: Could not create finding. Skipping...')
+                        self.log.error(f'ERR: Could not create finding. Skipping...')
                         continue
-                    print(f'Successfully created finding!')
+                    self.log.info(f'Successfully created finding!')
                     finding_id = response.get("flaw_id")
 
                     # update finding with asset info
-                    pt_finding = request_get_finding(auth.base_url, auth.get_auth_headers(), client_id, report_id, finding_id)
+                    if len(finding['assets']) > 0:
+                    
+                        pt_finding = request_get_finding(auth.base_url, auth.get_auth_headers(), client_id, report_id, finding_id)
 
-                    for asset_sid in finding['assets']:
-                        pt_asset = request_get_asset(auth.base_url, auth.get_auth_headers(), client_id, self.assets[asset_sid]['asset_id'])
-                        pt_finding = self.add_asset_to_finding(pt_finding, pt_asset, finding_sid, asset_sid)
-                    print(f'INFO: Updating finding <{pt_finding["title"]}> with asset information')
-                    response = request_update_finding(auth.base_url, auth.get_auth_headers(), pt_finding, client_id, report_id, finding_id)
-                    if response.get("message") != "success":
-                        print(f'ERR: Could not update finding. Skipping...')
-                        continue
-                    print(f'Successfully added asset info to finding!')
+                        for asset_sid in finding['assets']:
+                            pt_asset = request_get_asset(auth.base_url, auth.get_auth_headers(), client_id, self.assets[asset_sid]['asset_id'])
+                            pt_finding = self.add_asset_to_finding(pt_finding, pt_asset, finding_sid, asset_sid)
+                    
+                        self.log.info(f'INFO: Updating finding <{pt_finding["title"]}> with asset information')
+                        response = request_update_finding(auth.base_url, auth.get_auth_headers(), pt_finding, client_id, report_id, finding_id)
+                        if response.get("message") != "success":
+                            self.log.error(f'ERR: Could not update finding. Skipping...')
+                            continue
+                        self.log.info(f'Successfully added asset info to finding!')

@@ -10,7 +10,7 @@ def add_tag(list, tag):
     if new_tag not in list:
         list.append(new_tag)
 
-def try_parsing_date(possible_date_str, field):
+def try_parsing_date(log, possible_date_str, field):
     """
     Try to parse a date using several formats, warn about
     problematic value if the possible_date does not match
@@ -21,6 +21,6 @@ def try_parsing_date(possible_date_str, field):
             return time.strptime(possible_date_str, fmt)
         except ValueError:
             pass
-    print(f"Non-valid date format for '{field}': '{possible_date_str}'. Ignoring...")
+    log.exception(f"Non-valid date format for '{field}': '{possible_date_str}'. Ignoring...")
     return None
 

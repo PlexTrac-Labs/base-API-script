@@ -63,4 +63,4 @@ Once this setup is complete it will start looping through each row in CSV and tr
 After parsing if will create new clients, reports, findings, and assets in Plextrac.
 
 ## Logging
-
+The script is run in INFO mode so you can see progress on the command line. A log file will be created when the script is run and saved to the root directory where the script is. You can search this file for "WARNING" or "ERROR" to see if something did not get parsed or imported correctly. Any critical level issue will stop the script immediately.
