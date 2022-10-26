@@ -95,7 +95,7 @@ if __name__ == '__main__':
     print(f'Please view the log file generated from parsing to see if there were any errors.')
     print(f'If the data was not parsed correctly, please exit the script, fix the data, and re-run.')
 
-    if prompt_continue_anyways("\nThis cannot easily be undone if you have muiltiple clients."):
+    if prompt_continue_anyways(f'\nThis will import data into {len(parser.clients)} client(s). The more clients you have the harder it will be to undo this import.'):
         parser.import_data(auth)
         print(f'Import Complete\nAdditional logs were added to {parser.LOGS_FILE_PATH}')
     

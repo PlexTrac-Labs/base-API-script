@@ -207,6 +207,14 @@ class Parser():
             'input_blanks': False,
             'path': ['subStatus']
         },
+        'finding_tag': {
+            'id': 'finding_tag',
+            'object_type': 'FINDING',
+            'data_type' : 'TAG',
+            'validation_type': None,
+            'input_blanks': False,
+            'path': ['tags']
+        },
         'finding_multi_tag': {
             'id': 'finding_multi_tag',
             'object_type': 'FINDING',
@@ -1198,8 +1206,9 @@ class Parser():
             self.log.info(f'=======Parsing Finding {self.parser_progess+1}=======')
 
             # checking if current row contains a finding since the csv could have rows that extend beyond finding data
-            if row[csv_finding_title_index] == "":
+            if row[csv_finding_title_index] != "":
                 self.log.exception(f'Row {self.parser_progess+2} in the CSV did not have a value for the finding_title. Skipping...')
+                self.parser_progess += 1
                 continue
             
             vuln_name = row[csv_finding_title_index]
@@ -1209,7 +1218,7 @@ class Parser():
             self.parser_progess += 1
             self.log.info(f'=======End {vuln_name}=======')
 
-            # if self.parser_progess == 150:
+            # if self.parser_progess >= 150:
             #     break
 
         # post parsing processing
