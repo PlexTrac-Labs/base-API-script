@@ -379,7 +379,7 @@ class Parser():
     report_template = { # need all arrays build out to prevent KEY ERR when adding data
         'sid': None,
         'client_sid': None,
-        "name": f'Report',
+        "name": f'Custom CSV Import Report Blank',
         "status": "Published",
         "tags": ["custom_csv_import"],
         "custom_field": [],
@@ -530,6 +530,7 @@ class Parser():
         self.parser_time = time.strftime("%Y_%m_%d_%H_%M_%S", time.localtime(time.time()))
 
         self.client_template['name'] = f'Custom CSV Import {self.parser_date}'
+        self.report_template['name'] = f'Custom CSV Import Report {self.parser_date}'
 
         # csv logging
         self.CSV_LOGS_FILE_PATH = f'parser_logs_{self.parser_time}.csv'
@@ -544,7 +545,6 @@ class Parser():
                 self.log.StreamHandler()
             ]
         )
-
 
 
     #----------getters and setter----------
@@ -638,7 +638,7 @@ class Parser():
 
     
     def display_parser_results(self):
-        print(f'\n\nImport completed!') # Successfully imported {self.log_messages["SUCCESS"]["num"]}/{len(self.csv_data)} findings.\n')
+        print(f'\n\nCSV parsing completed!') # Successfully imported {self.log_messages["SUCCESS"]["num"]}/{len(self.csv_data)} findings.\n')
         
         # for log in self.log_messages.values():
         #     if log['num'] > 0:
@@ -701,12 +701,15 @@ class Parser():
         # filter for matching clients
         header = self.get_header_from_key("client_name")
         if header == None:
-            matching_clients = list(filter(lambda x: (f'Custom CSV Import {self.parser_date}' == str(x['name'])), self.clients.values()))
+            matching_clients = list(filter(lambda x: (self.client_template['name'] == str(x['name'])), self.clients.values()))
         else:
             index = list(self.csv_headers_mapping.keys()).index(header)
             value = row[index]
 
-            matching_clients = list(filter(lambda x: (str(value) in str(x['name'])), self.clients.values()))
+            if value == "":
+                matching_clients = list(filter(lambda x: (self.client_template['name'] == str(x['name'])), self.clients.values()))
+            else:
+                matching_clients = list(filter(lambda x: (str(value) in str(x['name'])), self.clients.values()))
 
         # return matched client
         if len(matching_clients) > 0:
@@ -744,14 +747,19 @@ class Parser():
         if header == None:
             matching_reports = self.reports.values()
             matching_reports = filter(lambda x: (x['client_sid'] == client_sid), matching_reports)
-            matching_reports = list(filter(lambda x: ("Report" in str(x['name'])), matching_reports))
+            matching_reports = list(filter(lambda x: (self.report_template['name'] in str(x['name'])), matching_reports))
         else:
             index = list(self.csv_headers_mapping.keys()).index(header)
             value = row[index]
 
-            matching_reports = self.reports.values()
-            matching_reports = filter(lambda x: (x['client_sid'] == client_sid), matching_reports)
-            matching_reports = list(filter(lambda x: (str(value) in str(x['name'])), matching_reports))
+            if value == "":
+                matching_reports = self.reports.values()
+                matching_reports = filter(lambda x: (x['client_sid'] == client_sid), matching_reports)
+                matching_reports = list(filter(lambda x: (self.report_template['name'] in str(x['name'])), matching_reports))
+            else:
+                matching_reports = self.reports.values()
+                matching_reports = filter(lambda x: (x['client_sid'] == client_sid), matching_reports)
+                matching_reports = list(filter(lambda x: (str(value) in str(x['name'])), matching_reports))
 
         # return matched report
         if len(matching_reports) > 0:
@@ -936,15 +944,17 @@ class Parser():
 
         if mapping['validation_type'] == "DATE_ZULU":
             raw_date = utils.try_parsing_date(self.log, value, header)
-            if raw_date != None:
-                self.set_value(obj, path, time.strftime("%Y-%m-%dT08:00:00.000000Z", raw_date))
+            if raw_date == None:
                 return
+            self.set_value(obj, path, time.strftime("%Y-%m-%dT08:00:00.000000Z", raw_date))
+            return
 
         if mapping['validation_type'] == "DATE_EPOCH":
             raw_date = utils.try_parsing_date(self.log, value, header)
-            if raw_date != None:
-                self.set_value(obj, path, int(time.mktime(raw_date)*1000))
+            if raw_date == None:
                 return
+            self.set_value(obj, path, int(time.mktime(raw_date)*1000))
+            return
 
         if mapping['validation_type'] == "SEVERITY":
             severities = ["Critical", "High", "Medium", "Low", "Informational"]
@@ -1189,7 +1199,7 @@ class Parser():
 
             # checking if current row contains a finding since the csv could have rows that extend beyond finding data
             if row[csv_finding_title_index] == "":
-                self.log.info(f'Row {self.parser_progess+2} in the CSV did not have a value for the finding_title. Skipping...')
+                self.log.exception(f'Row {self.parser_progess+2} in the CSV did not have a value for the finding_title. Skipping...')
                 continue
             
             vuln_name = row[csv_finding_title_index]

@@ -16,7 +16,7 @@ def try_parsing_date(log, possible_date_str, field):
     problematic value if the possible_date does not match
     any of the formats tried
     """
-    for fmt in ('%m/%d/%Y', '%m-%d-%Y', '%m/%d/%y', '%m-%d-%y', '%Y/%m/%d', '%Y-%m-%d'):
+    for fmt in ('%m/%d/%Y', '%m-%d-%Y', '%m/%d/%y', '%m-%d-%y', '%Y/%m/%d', '%Y-%m-%d', '%m/%d/%Y %I:%M:%S %p'):
         try:
             return time.strptime(possible_date_str, fmt)
         except ValueError:

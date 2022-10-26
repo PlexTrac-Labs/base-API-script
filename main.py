@@ -89,6 +89,14 @@ if __name__ == '__main__':
     handle_load_csv_data_verify(csv_data_file_path, parser)
 
     parser.parse_data()
-    parser.import_data(auth)
     parser.display_parser_results()
+
+    print(f'IMPORTANT: Data will be imported into Plextrac.')
+    print(f'Please view the log file generated from parsing to see if there were any errors.')
+    print(f'If the data was not parsed correctly, please exit the script, fix the data, and re-run.')
+
+    if prompt_continue_anyways("\nThis cannot easily be undone if you have muiltiple clients."):
+        parser.import_data(auth)
+        print(f'Import Complete\nAdditional logs were added to {parser.LOGS_FILE_PATH}')
+    
     exit()
