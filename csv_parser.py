@@ -1024,7 +1024,7 @@ class Parser():
         utils.add_tag(obj['tags'], value)
 
     # multiple tags
-    def add_tag(self, header, obj, mapping, value):
+    def add_multi_tag(self, header, obj, mapping, value):
         tags = value.split(",")
         for tag in tags:
             utils.add_tag(obj['tags'], value.strip())
@@ -1206,7 +1206,7 @@ class Parser():
             self.log.info(f'=======Parsing Finding {self.parser_progess+1}=======')
 
             # checking if current row contains a finding since the csv could have rows that extend beyond finding data
-            if row[csv_finding_title_index] != "":
+            if row[csv_finding_title_index] == "":
                 self.log.exception(f'Row {self.parser_progess+2} in the CSV did not have a value for the finding_title. Skipping...')
                 self.parser_progess += 1
                 continue
