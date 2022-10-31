@@ -372,6 +372,7 @@ class Parser():
         "sid": None,
         "name": f'Custom CSV Import Blank',
         "tags": ["custom_csv_import"],
+        "custom_field": [],
         "description": "Client for custom csv import script findings. This Client was created because there was no client_name key mapped in the data to be imported.",
         "assets": [],
         "reports": []
