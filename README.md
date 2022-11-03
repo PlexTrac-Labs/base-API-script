@@ -33,7 +33,7 @@ The config also can store your username and password. Plextrac authentication la
 ## Report Template & Findings Layout
 In the `config.yaml` file you can add a name of an existing Report Template and Findings Layout. If these values are present, it will verify the template exists and link it to all reports created. Upon navigating to the Report Details tab of a report, you will see the respective dropdown prepopulated.
 
-In the platform there can be duplicate names for report templates and findings layouts. For this script to know which template you want to add, there can only be a single template with the name oy uadd to the config file.
+In the platform there can be duplicate names for report templates and findings layouts. For this script to know which template you want to add, there can only be a single template with the same name you added to the config file.
 
 # Usage
 After setting everything up you can run the script with the following command. You should be in the folder where you cloned the repo when running the following.
