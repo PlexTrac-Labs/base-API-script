@@ -5,3 +5,8 @@ password:
 
 csv_headers_file_path: header_mapping.csv
 csv_data_file_path: 
+
+# name of a report template in the Plextrac instance will be added to all reports
+report_template_name: 
+# name of a finding layout in the Plextrac instance will be added to all reports
+findings_layout_name: 

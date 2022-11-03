@@ -263,3 +263,17 @@ def request_delete_asset(base_url, headers, client_id, asset_id):
     root = "/api/v1"
     path = f'/client/{client_id}/asset/{asset_id}'
     return request_delete(base_url, root, path, name, headers)
+
+#----------Report Template Endpoints----------
+def request_list_report_templates(base_url, headers, tenant_id):
+    name = "List Report Templates"
+    root = "/api/v1"
+    path = f'/tenant/{tenant_id}/report-templates'
+    return request_get(base_url, root, path, name, headers)
+
+#----------Findings Template Endpoints----------
+def request_list_findings_templates(base_url, headers):
+    name = "List Findings Templates"
+    root = "/api/v1"
+    path = f'/field-templates'
+    return request_get(base_url, root, path, name, headers)
