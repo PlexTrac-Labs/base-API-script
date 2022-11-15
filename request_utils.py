@@ -1,6 +1,10 @@
 import requests
 import json
 
+# if the Plextrac instance is running on https without valid certs, requests will respond with cert error
+# change this to false to override verification of certs
+verify_ssl = True
+
 # call if the api call fails, generally 500 codes
 def err_requests_general(request, type, path, e):
     print(f'Err: Could not complete {type} \'{request}\' on \'{path}\' endpoint. Exception: {e}')
@@ -8,10 +12,6 @@ def err_requests_general(request, type, path, e):
 # call when the api call returns a non success, generally 400 codes
 def err_non_200_response(request, status, reason):
     print(f'Err: \'{request}\' request failed with status: {status} - {reason}')
-
-# call when the api call returns a 200, with no data, if data was expected
-def err_empty_response(request):
-    print(f'Err: Received empty response from \'{request}\' request')
 
 # call when the api call doesn't return a valid json response, if a json response was expected
 def err_invalid_json_response(request, e):
@@ -29,16 +29,15 @@ def request_get(base_url, request_root, request_path, request_name, headers):
         response = requests.get(
             f'{base_url}{request_root}{request_path}',
             headers = headers,
+            verify = verify_ssl
         )
-
-        if response.status_code != 200:
-            err_non_200_response(request_name, response.status_code, response.reason)
-
-        if response.text == '':
-            err_empty_response(request_name)
 
         try:
             response_json = json.loads(response.text)
+
+            if response.status_code != 200:
+                err_non_200_response(request_name, response.status_code, response.reason)
+                print(f'Plextrac message: {response_json.get("message")}')
         except Exception as e:
             err_invalid_json_response(request_name, e)
             return response
@@ -56,17 +55,16 @@ def request_post(base_url, request_root, request_path, request_name, headers, pa
         response = requests.post(
             f'{base_url}{request_root}{request_path}',
             headers = headers,
-            json = payload
+            json = payload,
+            verify = verify_ssl
         )
-
-        if response.status_code != 200:
-            err_non_200_response(request_name, response.status_code, response.reason)
-
-        if response.text == '':
-            err_empty_response(request_name)
 
         try:
             response_json = json.loads(response.text)
+
+            if response.status_code != 200:
+                err_non_200_response(request_name, response.status_code, response.reason)
+                print(f'Plextrac message: {response_json.get("message")}')
         except Exception as e:
             err_invalid_json_response(request_name, e)
             return response
@@ -84,17 +82,16 @@ def request_put(base_url, request_root, request_path, request_name, headers, pay
         response = requests.put(
             f'{base_url}{request_root}{request_path}',
             headers = headers,
-            json = payload
+            json = payload,
+            verify = verify_ssl
         )
-
-        if response.status_code != 200:
-            err_non_200_response(request_name, response.status_code, response.reason)
-
-        if response.text == '':
-            err_empty_response(request_name)
 
         try:
             response_json = json.loads(response.text)
+
+            if response.status_code != 200:
+                err_non_200_response(request_name, response.status_code, response.reason)
+                print(f'Plextrac message: {response_json.get("message")}')
         except Exception as e:
             err_invalid_json_response(request_name, e)
             return response
@@ -112,17 +109,16 @@ def request_delete(base_url, request_root, request_path, request_name, headers):
     try:
         response = requests.delete(
             f'{base_url}{request_root}{request_path}',
-            headers = headers
+            headers = headers,
+            verify = verify_ssl
         )
-
-        if response.status_code != 200:
-            err_non_200_response(request_name, response.status_code, response.reason)
-
-        if response.text == '':
-            err_empty_response(request_name)
 
         try:
             response_json = json.loads(response.text)
+
+            if response.status_code != 200:
+                err_non_200_response(request_name, response.status_code, response.reason)
+                print(f'Plextrac message: {response_json.get("message")}')
         except Exception as e:
             err_invalid_json_response(request_name, e)
             return response
@@ -134,7 +130,13 @@ def request_delete(base_url, request_root, request_path, request_name, headers):
         exit()
 
 
-# list of endpoints - keeps like data together, tatic place for root and path info
+# list of endpoints - keeps like data together, static place for root and path info
+def request_root(base_url, headers):
+    name = "Root"
+    root = "/api/v1"
+    path = "/"
+    return request_get(base_url, root, path, name, headers)
+
 def request_authenticate(base_url, headers, payload):
     name = "Authenticate"
     root = "/api/v1"

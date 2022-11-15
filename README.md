@@ -15,7 +15,7 @@ pipenv install //this will create a virtual env and install all the dependancies
 ```
 
 # Usage
-After the Python environment is setup, you can run the script with the following command. You sohuld be in the folder where you cloned the repo when running the following.
+After the Python environment is setup, you can run the script with the following command. You should be in the folder where you cloned the repo when running the following.
 ```bash
 pipenv run python example_authenticate.py
 ```
@@ -25,7 +25,6 @@ pipenv run python example_authenticate.py
 - Username
 - Password
 - MFA Token (if enabled)
-- Cloudflare Access Token (Plextrac internal test instances)
 
 ## Script Execution Flow
 - Prompts user for Plextrac instance URL

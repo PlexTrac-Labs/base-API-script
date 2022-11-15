@@ -1,5 +1,5 @@
 from getpass import getpass
-from operator import itemgetter
+import time
 
 from input_utils import *
 from request_utils import *
@@ -14,6 +14,8 @@ class Auth():
         self.tenant_id = None
         self.auth_headers = {}
 
+        self.time_since_last_auth = None
+
 
     def add_auth_header(self, authorization_token):
         self.auth_headers["Authorization"] = authorization_token
@@ -22,43 +24,36 @@ class Auth():
     def add_cf_auth_header(self, cf_token):
         self.auth_headers["cf-access-token"] = cf_token
 
-    # checks is authorization is current and returns headers, otherwise tries to re-authenticate and return new auth headers
-    def get_auth_headers(self):
-        try:
-            response = requests.get(f'{self.base_url}/api/v2/whoami', headers=self.auth_headers)
 
-            if response.status_code == 200:
-                try:
-                    response_json = json.loads(response.text)
-                    if response_json.get('authentication_provider') != None:
-                        return self.auth_headers
-                except Exception as e:
-                    print("Cloudflare Authorization Expired")
-                    self.handle_authentication()
-                    return self.auth_headers
-            else:
-                print("Authorization Expired")
-                self.handle_authentication()
-                return self.auth_headers
-        except Exception as e:
-            print("Could not validate authentication headers. Is the API offline?")
+    def get_auth_headers(self):
+        """
+        checks is authorization is current and returns headers, otherwise tries to re-authenticate and return new auth headers
+
+        to prevent the auth from timing out after it was checked, but before it can be received by the API,
+        checks whether we are in the last minute of the 15 min auth window
+        """
+        if self.time_since_last_auth == None:
             self.handle_authentication()
-            return self.auth_headers
+
+        if time.time() - self.time_since_last_auth > 840:
+            self.handle_authentication()
+        
+        return self.auth_headers
 
 
     # prompts user for their plextrac url, checks that the API is up and running, then sets the url
     def handle_instance_url(self):
         if self.base_url == None:
             self.base_url = prompt_user("Please enter the full URL of your PlexTrac instance (with protocol)")
+        else:
+            print(f'Using instance_url from config...')
 
         #validate
         try:
-            response = requests.get(f'{self.base_url}/api/v1/') # could be refractored to use request utils
+            response = request_root(self.base_url, {}) # non authenticated endpoint - does not require any headers - used to see if we can connect to the api
 
             try:
-                response_json = json.loads(response.text)
-
-                if response_json['text'] == "Authenticate at /authenticate":
+                if response.get('text') == "Authenticate at /authenticate":
                     print("Success! Validated instance URL")
                     
             except Exception as e: # potential plextrac internal instance running behind Cloudflare
@@ -85,8 +80,10 @@ class Auth():
     def handle_cf_instance_url(self):
         if self.cf_token == None:
             self.cf_token = prompt_user("Please enter your active 'CF_Authorization' token")
+        else:
+            print(f'Using cf_token from config...')
 
-        response = requests.get(f'{self.base_url}/api/v1/', headers={"cf-access-token": self.cf_token}) # could be refractored to use request utils
+        response = request_root(self.base_url, headers={"cf-access-token": self.cf_token})
             
         try:
             response_json = json.loads(response.text)
@@ -108,8 +105,12 @@ class Auth():
 
         if self.username == None:
             self.username = prompt_user("Please enter your PlexTrac username")
+        else:
+            print(f'Using username from config...')
         if self.password == None:
             self.password = getpass(prompt="Password: ")
+        else:
+            print(f'Using password from config...')
         
         authenticate_data = {
             "username": self.username,
@@ -146,4 +147,5 @@ class Auth():
                     return self.handle_authentication()
 
         self.add_auth_header(response['token'])
+        self.time_since_last_auth = time.time()
         print('Success! Authenticated')
