@@ -28,4 +28,9 @@ You can add the following values to the config.yaml file. If a value is not set,
 - Username
 - Password
 - MFA Token (if enabled)
-- Client Name
+
+## Script Execution Flow
+- Prompts user for Plextrac instance URL
+  - Validate URL points to a running instance of Plextrac
+- Prompts user for username, password, and mfa (if applicable)
+- Calls authenticate endpoints and stores Authoirzation headers for future use

@@ -36,14 +36,14 @@ def prompt_user_options(msg, retry_msg="", options=[]):
 # prompts users for an input. checks the entered input is in a valid range. returns a valid choice
 def prompt_user_list(msg, retry_msg="", range=0):
     #setup
-    str_options = "0-" + str(range)
+    str_options = "1-" + str(range)
     
     #get input
     entered = input(prompt_prefix + msg + " (" + str_options + ")" + prompt_suffix)
     
     #validate input
-    if int(entered) >= 1 and int(entered) < range:
-        return int(entered)
+    if int(entered) > 0 and int(entered) <= range:
+        return int(entered)-1
 
     #ask again
     if prompt_retry(retry_msg):
