@@ -1,6 +1,8 @@
 from getpass import getpass
 import time
 
+import settings
+log = settings.log
 from input_utils import *
 from request_utils import *
 
@@ -46,7 +48,7 @@ class Auth():
         if self.base_url == None:
             self.base_url = prompt_user("Please enter the full URL of your PlexTrac instance (with protocol)")
         else:
-            print(f'Using instance_url from config...')
+            log.info(f'Using instance_url from config...')
 
         #validate
         try:
@@ -54,7 +56,7 @@ class Auth():
 
             try:
                 if response.get('text') == "Authenticate at /authenticate":
-                    print("Success! Validated instance URL")
+                    log.success("Validated instance URL")
                     
             except Exception as e: # potential plextrac internal instance running behind Cloudflare
                 if self.cf_token == None:
@@ -69,7 +71,7 @@ class Auth():
                     return self.handle_instance_url()
 
         except Exception as e:
-            # print("Exception: ", e)
+            log.exception(e)
             if prompt_retry("Could not validate URL. Either the API is offline or it was entered incorrectly\nExample: https://company.plextrac.com"):
                 self.base_url = None
                 return self.handle_instance_url()
@@ -81,7 +83,7 @@ class Auth():
         if self.cf_token == None:
             self.cf_token = prompt_user("Please enter your active 'CF_Authorization' token")
         else:
-            print(f'Using cf_token from config...')
+            log.info(f'Using cf_token from config...')
 
         response = request_root(self.base_url, headers={"cf-access-token": self.cf_token})
             
@@ -90,7 +92,7 @@ class Auth():
 
             if response_json['text'] == "Authenticate at /authenticate":
                 self.add_cf_auth_header(self.cf_token)
-                print("Success! Validated instance URL")
+                log.success("Validated instance URL")
                 
         except Exception as e:
             if prompt_retry("Could not validate instance URL."):
@@ -99,18 +101,18 @@ class Auth():
 
 
     def handle_authentication(self):
-        print('\n---Starting Authorization---')
+        log.info('---Starting Authorization---')
 
         self.handle_instance_url()
 
         if self.username == None:
             self.username = prompt_user("Please enter your PlexTrac username")
         else:
-            print(f'Using username from config...')
+            log.info(f'Using username from config...')
         if self.password == None:
             self.password = getpass(prompt="Password: ")
         else:
-            print(f'Using password from config...')
+            log.info(f'Using password from config...')
         
         authenticate_data = {
             "username": self.username,
@@ -134,7 +136,7 @@ class Auth():
         self.tenant_id = response.get('tenant_id')
 
         if response.get('mfa_enabled'):
-            print('MFA detected for user')
+            log.info('MFA detected for user')
 
             mfa_auth_data = {
                 "code": response.get('code'),
@@ -148,4 +150,4 @@ class Auth():
 
         self.add_auth_header(response['token'])
         self.time_since_last_auth = time.time()
-        print('Success! Authenticated')
+        log.success('Authenticated')

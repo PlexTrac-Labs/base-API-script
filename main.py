@@ -2,20 +2,12 @@ from operator import itemgetter
 from typing import Union
 import yaml
 
+import settings
+log = settings.log
 from input_utils import *
 from auth_utils import *
 from request_utils import *
 from csv_parser import *
-
-
-script_info = ["====================================================================",
-               "= General CSV Import Script                                        =",
-               "=------------------------------------------------------------------=",
-               "= Takes a CSV with rows representing client, report, finding and   =",
-               "= asset data and a CSV with how to map each column to a            =",
-               "= location in Plextrac. Parses the CSV and import data to Plextrac =",
-               "===================================================================="
-            ]
 
 
 #----------Loading and Validating Input CSVs----------
@@ -40,7 +32,7 @@ def handle_load_csv_headers_mapping(path, parser):
                 exit()
 
     parser.csv_headers_mapping = csv_headers_mapping
-    print(f'Success! Loaded csv headers mapping')
+    log.success(f'Loaded csv headers mapping')
 
 
 def handle_load_csv_data_verify(path, parser):
@@ -51,13 +43,13 @@ def handle_load_csv_data_verify(path, parser):
     csv = handle_load_csv_data("Enter file path to CSV data to import", csv_file_path=path)
 
     if csv.get('headers') != parser.get_csv_headers():
-        print(f'Debug: CSV headers read from file\n{csv["headers"]}')
-        print(f'Debug: Expected headers\n{parser.get_csv_headers()}')
+        log.warning(f'CSV headers read from file\n{csv["headers"]}')
+        log.warning(f'Expected headers\n{parser.get_csv_headers()}')
         if prompt_retry(f'Loaded {csv.get("file_path")} CSV headers don\'t match headers in Headers Mapping CSV.'):
             return handle_load_csv_data_verify("Enter file path to CSV data to import", "", parser.get_csv_headers())
 
     parser.csv_data = csv['data']
-    print(f'Success! Loaded csv data')
+    log.success(f'Loaded csv data')
 
 
 def handle_add_report_template_name(report_template_name, parser):
@@ -115,8 +107,7 @@ def handle_add_findings_template_name(findings_template_name, parser):
     
 
 if __name__ == '__main__':
-    for i in script_info:
-        print(i)
+    settings.print_script_info()
     
     with open("config.yaml", 'r') as f:
         args = yaml.safe_load(f)
@@ -127,40 +118,40 @@ if __name__ == '__main__':
     parser = Parser()
 
     # loads and validates csv data
-    print(f'\n---Starting data loading---')
+    log.info(f'---Starting data loading---')
     csv_headers_file_path = ""
     if args.get('csv_headers_file_path') != None and args.get('csv_headers_file_path') != "":
         csv_headers_file_path = args.get('csv_headers_file_path')
-        print(f'Using csv header file path \'{csv_headers_file_path}\' from config...')
+        log.info(f'Using csv header file path \'{csv_headers_file_path}\' from config...')
     handle_load_csv_headers_mapping(csv_headers_file_path, parser)
     
     csv_data_file_path = ""
     if args.get('csv_data_file_path') != None and args.get('csv_data_file_path') != "":
         csv_data_file_path = args.get('csv_data_file_path')
-        print(f'Using csv data file path \'{csv_data_file_path}\' from config...')
+        log.info(f'Using csv data file path \'{csv_data_file_path}\' from config...')
     handle_load_csv_data_verify(csv_data_file_path, parser)
 
     report_template_name = ""
     if args.get('report_template_name') != None and args.get('report_template_name') != "":
         report_template_name = args.get('report_template_name')
-        print(f'Using report template \'{report_template_name}\' from config...')
+        log.info(f'Using report template \'{report_template_name}\' from config...')
         handle_add_report_template_name(report_template_name, parser)
 
     findings_layout_name = ""
     if args.get('findings_layout_name') != None and args.get('findings_layout_name') != "":
         findings_layout_name = args.get('findings_layout_name')
-        print(f'Using findings layout \'{findings_layout_name}\' from config...')
+        log.info(f'Using findings layout \'{findings_layout_name}\' from config...')
         handle_add_findings_template_name(findings_layout_name, parser)
 
     parser.parse_data()
     parser.display_parser_results()
 
-    print(f'\nIMPORTANT: Data will be imported into Plextrac.')
-    print(f'Please view the log file generated from parsing to see if there were any errors.')
-    print(f'If the data was not parsed correctly, please exit the script, fix the data, and re-run.')
+    log.info(f'IMPORTANT: Data will be imported into Plextrac.')
+    log.info(f'Please view the log file generated from parsing to see if there were any errors.')
+    log.info(f'If the data was not parsed correctly, please exit the script, fix the data, and re-run.')
 
     if prompt_continue_anyways(f'\nThis will import data into {len(parser.clients)} client(s). The more clients you have the harder it will be to undo this import.'):
         parser.import_data(auth)
-        print(f'Import Complete\nAdditional logs were added to {parser.LOGS_FILE_PATH}')
+        log.info(f'Import Complete. Additional logs were added to {log.LOGS_FILE_PATH}')
     
     exit()
