@@ -288,6 +288,14 @@ class Parser():
             'input_blanks': False,
             'path': ['asset']
         },
+        'asset_type': {
+            'id': 'asset_type',
+            'object_type': 'ASSET',
+            'data_type' : 'DETAIL',
+            'validation_type': 'ASSET_TYPE', # validate
+            'input_blanks': False,
+            'path': ['type']
+        },
         'asset_criticality': {
             'id': 'asset_criticality',
             'object_type': 'ASSET',
@@ -296,6 +304,22 @@ class Parser():
             'input_blanks': False,
             'path': ['assetCriticality']
         },
+        'asset_system_owner': {
+            'id': 'asset_system_owner',
+            'object_type': 'ASSET',
+            'data_type' : 'DETAIL',
+            'validation_type': None,
+            'input_blanks': False,
+            'path': ['system_owner']
+        },
+        'asset_data_owner': {
+            'id': 'asset_data_owner',
+            'object_type': 'ASSET',
+            'data_type' : 'DETAIL',
+            'validation_type': None,
+            'input_blanks': False,
+            'path': ['data_owner']
+        },
         'asset_hostname': {
             'id': 'asset_hostname',
             'object_type': 'ASSET',
@@ -303,6 +327,78 @@ class Parser():
             'validation_type': None,
             'input_blanks': False,
             'path': ['hostname']
+        },
+        'asset_operating_systems': {
+            'id': 'asset_operating_systems',
+            'object_type': 'ASSET',
+            'data_type' : 'LIST',
+            'validation_type': None,
+            'input_blanks': False,
+            'path': ['operating_system']
+        },
+        'asset_dns_name': {
+            'id': 'asset_dns_name',
+            'object_type': 'ASSET',
+            'data_type' : 'DETAIL',
+            'validation_type': None,
+            'input_blanks': False,
+            'path': ['dns_name']
+        },
+        'asset_host_fqdn': {
+            'id': 'asset_host_fqdn',
+            'object_type': 'ASSET',
+            'data_type' : 'DETAIL',
+            'validation_type': None,
+            'input_blanks': False,
+            'path': ['host_fqdn']
+        },
+        'asset_host_rdns': {
+            'id': 'asset_host_rdns',
+            'object_type': 'ASSET',
+            'data_type' : 'DETAIL',
+            'validation_type': None,
+            'input_blanks': False,
+            'path': ['host_rdns']
+        },
+        'asset_mac_address': {
+            'id': 'asset_mac_address',
+            'object_type': 'ASSET',
+            'data_type' : 'DETAIL',
+            'validation_type': None,
+            'input_blanks': False,
+            'path': ['mac_address']
+        },
+        'asset_physical_location': {
+            'id': 'asset_physical_location',
+            'object_type': 'ASSET',
+            'data_type' : 'DETAIL',
+            'validation_type': None,
+            'input_blanks': False,
+            'path': ['physical_location']
+        },
+        'asset_netbios_name': {
+            'id': 'asset_netbios_name',
+            'object_type': 'ASSET',
+            'data_type' : 'DETAIL',
+            'validation_type': None,
+            'input_blanks': False,
+            'path': ['netbios_name']
+        },
+        'asset_pci_compliance_status': {
+            'id': 'asset_pci_compliance_status',
+            'object_type': 'ASSET',
+            'data_type' : 'DETAIL',
+            'validation_type': 'PCI_STATUS', # validate
+            'input_blanks': False,
+            'path': ['pci_status']
+        },
+        'asset_description': {
+            'id': 'asset_description',
+            'object_type': 'ASSET',
+            'data_type' : 'DETAIL',
+            'validation_type': None,
+            'input_blanks': False,
+            'path': ['description']
         },
         'asset_known_ips': {
             'id': 'asset_known_ips',
@@ -969,6 +1065,18 @@ class Parser():
         if mapping['validation_type'] == "ASSET_TYPE":
             types = ["Workstation", "Server", "Network Device", "Application", "General"]
             if value not in types:
+                log.warning(f'Header "{header}" value "{value}" is not a valid asset type. Must be in the list ["Workstation", "Server", "Network Device", "Application", "General"] Skipping...')
+                return
+
+        if mapping['validation_type'] == "PCI_STATUS":
+            pass_types = ["Pass", "pass", "yes", "y"]
+            fail_types = ["Fail", "fail", "no", "n"]
+            types = pass_types.copy
+            if value in pass_types:
+                value = "Pass"
+            elif value in fail_types:
+                value = "Fail"
+            else:
                 log.warning(f'Header "{header}" value "{value}" is not a valid asset type. Must be in the list ["Workstation", "Server", "Network Device", "Application", "General"] Skipping...')
                 return
 
