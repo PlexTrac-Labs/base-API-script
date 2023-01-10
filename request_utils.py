@@ -41,7 +41,7 @@ def request_get(base_url, request_root, request_path, request_name, headers):
 
             if response.status_code != 200:
                 err_non_200_response(request_name, response.status_code, response.reason)
-                log.warn(f'Plextrac message: {response_json.get("message")}')
+                log.warning(f'Plextrac message: {response_json.get("message")}')
         except Exception as e:
             err_invalid_json_response(request_name, e)
             return response
@@ -68,7 +68,7 @@ def request_post(base_url, request_root, request_path, request_name, headers, pa
 
             if response.status_code != 200:
                 err_non_200_response(request_name, response.status_code, response.reason)
-                log.warn(f'Plextrac message: {response_json.get("message")}')
+                log.warning(f'Plextrac message: {response_json.get("message")}')
         except Exception as e:
             err_invalid_json_response(request_name, e)
             return response
@@ -95,7 +95,7 @@ def request_post_multipart(base_url, request_root, request_path, request_name, h
 
             if response.status_code != 200:
                 err_non_200_response(request_name, response.status_code, response.reason)
-                log.warn(f'Plextrac message: {response_json.get("message")}')
+                log.warning(f'Plextrac message: {response_json.get("message")}')
         except Exception as e:
             err_invalid_json_response(request_name, e)
             return response
@@ -122,7 +122,7 @@ def request_put(base_url, request_root, request_path, request_name, headers, pay
 
             if response.status_code != 200:
                 err_non_200_response(request_name, response.status_code, response.reason)
-                log.warn(f'Plextrac message: {response_json.get("message")}')
+                log.warning(f'Plextrac message: {response_json.get("message")}')
         except Exception as e:
             err_invalid_json_response(request_name, e)
             return response
@@ -149,7 +149,7 @@ def request_delete(base_url, request_root, request_path, request_name, headers):
 
             if response.status_code != 200:
                 err_non_200_response(request_name, response.status_code, response.reason)
-                log.warn(f'Plextrac message: {response_json.get("message")}')
+                log.warning(f'Plextrac message: {response_json.get("message")}')
         except Exception as e:
             err_invalid_json_response(request_name, e)
             return response
