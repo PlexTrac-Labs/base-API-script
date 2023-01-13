@@ -643,7 +643,6 @@ class Parser():
         'notes': ""
     }
 
-
     assets = {}
     affected_assets = {}
     #--- END Asset---
@@ -1006,9 +1005,6 @@ class Parser():
 
         Does NOT add any other asset data keys besides the names.
         """
-        matching_assets = list(self.assets.values())
-        matching_assets = filter(lambda x: (x['client_sid'] == client_sid), matching_assets)
-
         header = self.get_header_from_key('asset_multi_name')
         if header == None:
             return
@@ -1020,19 +1016,22 @@ class Parser():
 
         for asset_name in value.split(","):
             asset_name = asset_name.strip()
-            temp_matching_assets = list(filter(lambda x: (asset_name == x['asset']), matching_assets))
+
+            matching_assets = list(self.assets.values())
+            matching_assets = filter(lambda x: (x['client_sid'] == client_sid), matching_assets)
+            matching_assets = list(filter(lambda x: (asset_name == x['asset']), matching_assets))
 
             # create asset
             new_sid = uuid4()
             asset = deepcopy(self.asset_template)
             asset['sid'] = new_sid
             asset['client_sid'] = client_sid
-            asset['dup_num'] = len(temp_matching_assets) + 1
-            if len(temp_matching_assets) > 0:
-                asset['original_asset_sid'] = temp_matching_assets[0]['sid']
+            asset['finding_sid'] = finding_sid
+            asset['dup_num'] = len(matching_assets) + 1
+            if len(matching_assets) > 0:
+                asset['original_asset_sid'] = matching_assets[0]['sid']
 
             self.set_value(asset, ['asset'], asset_name)
-            asset.update(deepcopy(self.affected_asset_fields))
             asset['is_multi'] = True
 
             self.assets[new_sid] = asset
@@ -1070,6 +1069,7 @@ class Parser():
         asset = deepcopy(self.asset_template)
         asset['sid'] = new_sid
         asset['client_sid'] = client_sid
+        asset['finding_sid'] = finding_sid
         asset['dup_num'] = len(matching_assets) + 1
         if len(matching_assets) > 0:
             asset['original_asset_sid'] = matching_assets[0]['sid']
@@ -1403,9 +1403,15 @@ class Parser():
             return
 
         self.handle_multi_asset(row, client_sid, finding_sid)
+        log.debug(f'After MULTI asset call, asset list:')
+        for asset in self.assets.values():
+            log.debug(f'SID: {asset["sid"]} - Name: {asset["asset"]} - Dup num: {asset["dup_num"]} - OG SID: {asset["original_asset_sid"]}')
 
         # query csv row for asset specific data and create or choose asset
         asset_sid, asset_name = self.handle_asset(row, client_sid, finding_sid)
+        log.debug(f'After SINGLE asset call, asset list:')
+        for asset in self.assets.values():
+            log.debug(f'SID: {asset["sid"]} - Name: {asset["asset"]} - Dup num: {asset["dup_num"]} - OG SID: {asset["original_asset_sid"]}')
 
         # if there was a header mapped to a single asset, handle the potential affected asset data for the single asset
         if finding_sid != None and asset_sid != None:
@@ -1558,3 +1564,9 @@ class Parser():
                             log.warning(f'Could not update finding. Skipping...')
                             continue
                         log.success(f'Successfully added asset(s) info to finding!')
+
+    def save_data_as_ptrac():
+        """
+        Creates and adds all relevant data to generate a ptrac file for each report found while parsing
+        """
+        pass
