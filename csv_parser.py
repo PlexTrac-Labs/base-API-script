@@ -384,6 +384,14 @@ class Parser():
             'input_blanks': False,
             'path': ['netbios_name']
         },
+        'asset_total_cves': {
+            'id': 'asset_total_cves',
+            'object_type': 'ASSET',
+            'data_type' : 'DETAIL',
+            'validation_type': 'POS_INT_AS_STR', # validate
+            'input_blanks': False,
+            'path': ['total_cves']
+        },
         'asset_pci_compliance_status': {
             'id': 'asset_pci_compliance_status',
             'object_type': 'ASSET',
@@ -424,8 +432,49 @@ class Parser():
             'input_blanks': False,
             'path': ['tags']
         },
+        'asset_ports': {
+            'id': 'asset_ports',
+            'object_type': 'ASSET',
+            'data_type' : 'PORTS',
+            'validation_type': None,
+            'input_blanks': False,
+            'path': ['ports']
+        },
+        # ASSET PORT DATA
+        'asset_port_number': {
+            'id': 'asset_port_number',
+            'object_type': 'ASSET_PORT',
+            'data_type' : 'DETAIL',
+            'validation_type': 'POS_INT_AS_STR', # validate
+            'input_blanks': False,
+            'path': ['number']
+        },
+        'asset_port_service': {
+            'id': 'asset_port_service',
+            'object_type': 'ASSET_PORT',
+            'data_type' : 'DETAIL',
+            'validation_type': None,
+            'input_blanks': False,
+            'path': ['service']
+        },
+        'asset_port_protocol': {
+            'id': 'asset_port_protocol',
+            'object_type': 'ASSET_PORT',
+            'data_type' : 'DETAIL',
+            'validation_type': None,
+            'input_blanks': False,
+            'path': ['protocol']
+        },
+        'asset_port_version': {
+            'id': 'asset_port_version',
+            'object_type': 'ASSET_PORT',
+            'data_type' : 'DETAIL',
+            'validation_type': None,
+            'input_blanks': False,
+            'path': ['version']
+        },
         # AFFECTED ASSET INFO
-        'asset_status': {
+        'affected_asset_status': {
             'id': 'asset_status',
             'object_type': 'AFFECTED_ASSET',
             'data_type' : 'DETAIL',
@@ -433,7 +482,7 @@ class Parser():
             'input_blanks': False,
             'path': ['status']
         },
-        'asset_sub_status': {
+        'affected_asset_sub_status': {
             'id': 'asset_sub_status',
             'object_type': 'AFFECTED_ASSET',
             'data_type' : 'DETAIL',
@@ -441,7 +490,7 @@ class Parser():
             'input_blanks': False,
             'path': ['subStatus']
         },
-        'asset_ports': {
+        'affected_asset_ports': {
             'id': 'asset_ports',
             'object_type': 'AFFECTED_ASSET',
             'data_type' : 'PORTS',
@@ -449,13 +498,46 @@ class Parser():
             'input_blanks': False,
             'path': ['ports']
         },
-        'asset_location_url': {
+        'affected_asset_location_url': {
             'id': 'asset_location_url',
             'object_type': 'AFFECTED_ASSET',
             'data_type' : 'DETAIL',
             'validation_type': None,
             'input_blanks': False,
             'path': ['locationUrl']
+        },
+        # AFFECTED ASSET PORT DATA
+        'affected_asset_port_number': {
+            'id': 'affected_asset_port_number',
+            'object_type': 'AFFECTED_ASSET_PORT',
+            'data_type' : 'DETAIL',
+            'validation_type': 'POS_INT_AS_STR', # validate
+            'input_blanks': False,
+            'path': ['number']
+        },
+        'affected_asset_port_service': {
+            'id': 'affected_asset_port_service',
+            'object_type': 'AFFECTED_ASSET_PORT',
+            'data_type' : 'DETAIL',
+            'validation_type': None,
+            'input_blanks': False,
+            'path': ['service']
+        },
+        'affected_asset_port_protocol': {
+            'id': 'affected_asset_port_protocol',
+            'object_type': 'AFFECTED_ASSET_PORT',
+            'data_type' : 'DETAIL',
+            'validation_type': None,
+            'input_blanks': False,
+            'path': ['protocol']
+        },
+        'affected_asset_port_version': {
+            'id': 'affected_asset_port_version',
+            'object_type': 'AFFECTED_ASSET_PORT',
+            'data_type' : 'DETAIL',
+            'validation_type': None,
+            'input_blanks': False,
+            'path': ['version']
         }
     }
     #--- END CSV---
@@ -511,7 +593,7 @@ class Parser():
         'title': None,
         'severity': "Informational",
         'status': "Open",
-        'description': "",
+        'description': "No description",
         'recommendations': "",
         'references': "",
         'fields': {},
@@ -547,7 +629,9 @@ class Parser():
         'assetCriticality': None,
         'hostname': "",
         'knownIps': [],
-        'tags': ["custom_csv_import"]
+        'operating_system': [],
+        'tags': ["custom_csv_import"],
+        'ports': {}
     }
 
     # template for created nested affected asset
@@ -558,6 +642,7 @@ class Parser():
         'vulnerableParameters': [],
         'notes': ""
     }
+
 
     assets = {}
     affected_assets = {}
@@ -761,9 +846,6 @@ class Parser():
         Must be called after the finding and asset are created
         """
         asset_id = asset['id']
-        # asset wasn't created successfully, can't add
-        if asset_id == None:
-            return finding
 
         affected_asset = asset
         affected_asset_fields = deepcopy(self.affected_asset_fields)
@@ -994,6 +1076,10 @@ class Parser():
 
         self.add_data_to_object(asset, "ASSET", row)
 
+        # adds unaffected port data to asset
+        asset_ports = asset['ports']
+        self.handle_port_data(row, asset_ports, "ASSET_PORT")
+
         self.assets[new_sid] = asset
         self.clients[client_sid]['assets'].append(new_sid)
         self.findings[finding_sid]['assets'].append(new_sid)
@@ -1012,8 +1098,26 @@ class Parser():
 
         self.add_data_to_object(affected_asset, "AFFECTED_ASSET", row)
 
+        # adds affected port data to affected asset
+        affected_asset_ports = affected_asset['ports']
+        self.handle_port_data(row, affected_asset_ports, "AFFECTED_ASSET_PORT")
+
         self.affected_assets[new_sid] = affected_asset
         self.findings[finding_sid]['affected_asset_sid'] = new_sid
+
+
+    def handle_port_data(self, row, ports, type):
+        """
+        Handles asset port data that relates to an asset that should be added on an asset or affected asset
+
+        Creates new port data object and adds all csv column data that relates to the port
+        """
+        port_data = {"number": None}
+
+        self.add_data_to_object(port_data, type, row)
+
+        if port_data['number'] != None:
+            ports[int(port_data['number'])] = port_data
     #----------End Object Handling----------
 
 
@@ -1069,15 +1173,19 @@ class Parser():
                 return
 
         if mapping['validation_type'] == "PCI_STATUS":
-            pass_types = ["Pass", "pass", "yes", "y"]
-            fail_types = ["Fail", "fail", "no", "n"]
-            types = pass_types.copy
+            pass_types = ["Pass", "pass", "Yes", "yes", "y"]
+            fail_types = ["Fail", "fail", "No", "no", "n"]
             if value in pass_types:
-                value = "Pass"
+                value = "pass"
             elif value in fail_types:
-                value = "Fail"
+                value = "fail"
             else:
-                log.warning(f'Header "{header}" value "{value}" is not a valid asset type. Must be in the list ["Workstation", "Server", "Network Device", "Application", "General"] Skipping...')
+                log.warning(f'Header "{header}" value "{value}" is not a valid asset type. Must be in the list ["Pass", "pass", "Yes", "yes", "y"] or ["Fail", "fail", "No", "no", "n"] Skipping...')
+                return
+
+        if mapping['validation_type'] == "POS_INT_AS_STR":
+            if not utils.is_str_positive_integer(value):
+                log.warning(f'Header "{header}" value "{value}" is not a valid number. Must be a positive integer. Skipping...')
                 return
 
         if mapping['validation_type'] == "FLOAT":
@@ -1092,6 +1200,13 @@ class Parser():
                 self.set_value(obj, path, bool(value))
             except ValueError:
                 log.exception(f'Header "{header}" value "{value}" cannot be converted to a boolean. Skipping...')
+            return
+
+        if mapping['validation_type'] == "INT":
+            try:
+                self.set_value(obj, path, int(value))
+            except ValueError:
+                log.exception(f'Header "{header}" value "{value}" cannot be converted to an integer. Skipping...')
             return
         
         self.set_value(obj, path, str(value))
@@ -1171,8 +1286,21 @@ class Parser():
 
     # list (asset known ips, operating systems)
     def add_list(self, header, obj, mapping, value):
-        if value not in obj[mapping['path'][0]]:
-            obj[mapping['path'][0]].append(value)
+        log.debug(f'Updating \'{header}\' with values [{value}]')
+        values = value.split(",")
+        for value in values:
+            new_value = value.strip()
+            log.debug(f'Adding \'{new_value}\' to \'{mapping["path"][0]}\' list with existing values {obj[mapping["path"][0]]}')
+            if value not in obj[mapping['path'][0]]:
+                if mapping['path'][0] == "knownIps": # add to list of known IPs, must be a valid IPv4
+                    if utils.is_valid_ipv4_address(new_value):
+                        obj[mapping['path'][0]].append(new_value)
+                    else:
+                        log.warning(f'IP \'{new_value}\' is not a valid IPv4 address. Skipping...')
+                else: # add to any list with no validation
+                    obj[mapping['path'][0]].append(new_value)
+
+        log.debug(f'Updated list {obj[mapping["path"][0]]}')
 
     # asset port obj - csv data should be formatted "port|service|protocol|version"
     def add_port(self, header, obj, mapping, value):
@@ -1181,10 +1309,14 @@ class Parser():
             data = port.strip().split("|")
             if len(data) != 4:
                 log.warning(f'Port data {port} not formatted correctly. Expected "port|service|protocol|version". Ignoring...')
-                return
+                continue
             if data[0] == "":
                 log.warning(f'Missing port number. Expected "port|service|protocol|version". Ignoring...')
-                return
+                continue
+            if not utils.is_str_positive_integer(data[0].strip()):
+                log.warning(f'Port number "{data[0].strip()}" from "{port}" is not a valid number. Must be a positive integer. Skipping...')
+                continue
+            
             port = {
                 'number': data[0].strip(),
                 'service': data[1].strip(),
@@ -1279,6 +1411,7 @@ class Parser():
         if finding_sid != None and asset_sid != None:
             self.handle_affected_asset(row, finding_sid)
 
+
     def parse_data(self):
         """
         Top level parsing controller. Loops through loaded csv, gathers required data, calls function to process data.
@@ -1361,6 +1494,7 @@ class Parser():
                 log.info(f'Creating asset <{payload["asset"]}>')
                 response = request_create_asset(auth.base_url, auth.get_auth_headers(), payload, client_id)
                 if response.get("message") != "success":
+                    asset['asset_id'] = None
                     log.warning(f'Could not create asset. Skipping...')
                     continue
                 log.success(f'Successfully created asset!')
@@ -1399,16 +1533,28 @@ class Parser():
 
                     # update finding with asset info
                     if len(finding['assets']) > 0:
-                    
+                        log.info(f'Updating finding <{finding["title"]}> with asset information')
+
                         pt_finding = request_get_finding(auth.base_url, auth.get_auth_headers(), client_id, report_id, finding_id)
 
+                        num_assets_to_update = 0
                         for asset_sid in finding['assets']:
-                            pt_asset = request_get_asset(auth.base_url, auth.get_auth_headers(), client_id, self.assets[asset_sid]['asset_id'])
-                            pt_finding = self.add_asset_to_finding(pt_finding, pt_asset, finding_sid, asset_sid)
+                            pt_asset_id = self.assets[asset_sid]['asset_id']
+                            if pt_asset_id == None:
+                                log.warning(f'Asset \'{self.assets[asset_sid]["asset"]}\' was not created successfully. Cannot add to finding. Skipping...')
+                            else:
+                                pt_asset = request_get_asset(auth.base_url, auth.get_auth_headers(), client_id, pt_asset_id)
+                                pt_finding = self.add_asset_to_finding(pt_finding, pt_asset, finding_sid, asset_sid)
+                                num_assets_to_update += 1
+
+                        if num_assets_to_update < 1:
+                            continue
                     
-                        log.info(f'Updating finding <{pt_finding["title"]}> with asset information')
+                        if num_assets_to_update != len(finding['assets']):
+                            log.warning(f'Some assets cannot be adding. Adding {num_assets_to_update}/{len(finding["assets"])}')
+
                         response = request_update_finding(auth.base_url, auth.get_auth_headers(), pt_finding, client_id, report_id, finding_id)
                         if response.get("message") != "success":
                             log.warning(f'Could not update finding. Skipping...')
                             continue
-                        log.success(f'Successfully added asset info to finding!')
+                        log.success(f'Successfully added asset(s) info to finding!')

@@ -77,7 +77,7 @@ class LogFormatHandler():
         self.logger.info(ColorPrint.print_green(f'[SUCCESS] {message}'))
 
     def warning(self, message):
-        self.logger.warning(ColorPrint.print_yellow(f'[WARN] {message}'))
+        self.logger.warning(ColorPrint.print_yellow(f'[WARNING] {message}'))
 
     def error(self, message):
         self.logger.error(ColorPrint.print_red(f'[ERROR] {message}'))
