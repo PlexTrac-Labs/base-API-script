@@ -6,7 +6,8 @@ log = settings.log
 
 
 def format_key(str):
-    return re.sub('[\W]', '', re.sub('[ -]', '_', str.lower()))
+    new_str = str.strip().lower()
+    return re.sub('[\W]', '', re.sub('[ -]', '_', new_str))
 
 def add_tag(list, tag):
     new_tag = format_key(tag)

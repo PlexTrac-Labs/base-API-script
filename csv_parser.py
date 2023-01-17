@@ -1238,9 +1238,10 @@ class Parser():
 
     # multiple tags
     def add_multi_tag(self, header, obj, mapping, value):
+        log.debug
         tags = value.split(",")
         for tag in tags:
-            utils.add_tag(obj['tags'], value.strip())
+            utils.add_tag(obj['tags'], tag)
 
     # report narrative
     def add_label_text(self, header, obj, mapping, value):
