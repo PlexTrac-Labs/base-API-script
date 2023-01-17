@@ -42,3 +42,14 @@ def is_valid_ipv4_address(address):
         return True 
     else:
         return False 
+
+def is_valid_cve(cve):
+    cve_pattern = re.compile(r'CVE-[0-9]{4}-[0-9]')
+    return cve_pattern.match(cve) is not None
+
+def is_valid_cwe(cwe):
+    cwe_pattern = re.compile(r'CWE-[0-9]')
+    pattern_match = cwe_pattern.match(cwe) is not None
+    cwe_num = re.compile(r'[0-9]')
+    num_match = cwe_num.match(cwe) is not None
+    return pattern_match or num_match

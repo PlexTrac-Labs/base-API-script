@@ -1255,34 +1255,40 @@ class Parser():
     def add_cve(self, header, obj, mapping, value):
         cves = value.split(",")
         for cve in cves:
-            values = cve.strip().split("-")
-            try:
-                data= {
-                    "name": "value",
-                    "year": int(values[1]),
-                    "id": int(values[2]),
-                    "link": f'https://www.cve.org/CVERecord?id={value}'
-                }
-
-                self.set_value(obj, mapping['path'], data)
-            except ValueError:
-                log.warning(f'Header "{header}" value "{value}" is not a list of valid CVE IDs. Expects "CVE-2022-12345" or "CVE-2022-12345, CVE-2022-67890" Skipping...')
+            cve_clean = cve.strip()
+            if not utils.is_valid_cve(cve_clean):
+                log.warning(f'Header "{header}" value "{cve_clean}" is not a list of valid CVE IDs. Expects "CVE-2022-12345" or "CVE-2022-12345, CVE-2022-67890" Skipping...')
+                return
+            
+            values = cve_clean.split("-")
+            data= {
+                "name": cve_clean,
+                "year": int(values[1]),
+                "id": int(values[2]),
+                "link": f'https://www.cve.org/CVERecord?id={cve_clean}'
+            }
+            self.set_value(obj, mapping['path'], data)
+                
 
     # finding cwe
     def add_cwe(self, header, obj, mapping, value):
         cwes = value.split(",")
         for cwe in cwes:
-            cwe = cwe.strip()
-            try:
-                data = {
-                    "name": f'CWE-{cwe}',
-                    "id": int(cwe),
-                    "link": f'https://cwe.mitre.org/data/definitions/{cwe}.html'
-                }
+            cwe_clean = cwe.strip()
+            if not utils.is_valid_cwe(cwe_clean):
+                log.warning(f'Header "{header}" value "{cwe_clean}" is not a list of valid CWE numbers. Expects "1234" or "CWE-1234" Skipping...')
+                return
 
-                self.set_value(obj, mapping['path'], data)
-            except ValueError:
-                log.exception(f'Header "{header}" value "{value}" is not a list of valid CWE numbers. Expects "123" or "123, 456" Skipping...')
+            if cwe_clean.startswith("CWE"):
+                cwe_clean = cwe_clean[4:]
+
+            data = {
+                "name": f'CWE-{cwe_clean}',
+                "id": int(cwe_clean),
+                "link": f'https://cwe.mitre.org/data/definitions/{cwe_clean}.html'
+            }
+            self.set_value(obj, mapping['path'], data)
+
 
     # list (asset known ips, operating systems)
     def add_list(self, header, obj, mapping, value):
