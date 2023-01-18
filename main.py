@@ -150,8 +150,12 @@ if __name__ == '__main__':
     log.info(f'Please view the log file generated from parsing to see if there were any errors.')
     log.info(f'If the data was not parsed correctly, please exit the script, fix the data, and re-run.')
 
-    if prompt_continue_anyways(f'\nThis will import data into {len(parser.clients)} client(s). The more clients you have the harder it will be to undo this import.'):
+    if prompt_continue_anyways(f'This will import data into {len(parser.clients)} client(s). The more clients you have the harder it will be to undo this import.'):
         parser.import_data(auth)
         log.info(f'Import Complete. Additional logs were added to {log.LOGS_FILE_PATH}')
+
+    if prompt_user_options(f'Would yo like to create and save ptrac(s) for {len(parser.reports)} reports(s).', "Invalid option", ["y", "n"]) == "y":
+        parser.save_data_as_ptrac()
+        log.info(f'Ptrac(s) creation complete. File(s) can be found in \'exported-ptracs\' folder. Additional logs were added to {log.LOGS_FILE_PATH}')
     
     exit()

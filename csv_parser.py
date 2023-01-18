@@ -715,8 +715,13 @@ class Parser():
         self.csv_data = None
         self.logging_data = None
         self.parser_progess = None
-        self.parser_date = time.strftime("%m/%d/%Y", time.localtime(time.time()))
-        self.parser_time = time.strftime("%Y_%m_%d_%H_%M_%S", time.localtime(time.time()))
+
+        self.severities = ["Critical", "High", "Medium", "Low", "Informational"]
+
+        self.parser_time_seconds = time.time()
+        self.parser_time_milli_seconds = int(self.parser_time_seconds*1000)
+        self.parser_date = time.strftime("%m/%d/%Y", time.localtime(self.parser_time_seconds))
+        self.parser_time = time.strftime("%Y_%m_%d_%H_%M_%S", time.localtime(self.parser_time_seconds))
 
         self.client_template['name'] = f'Custom CSV Import {self.parser_date}'
         self.report_template['name'] = f'Custom CSV Import Report {self.parser_date}'
@@ -1155,8 +1160,8 @@ class Parser():
             return
 
         if mapping['validation_type'] == "SEVERITY":
-            severities = ["Critical", "High", "Medium", "Low", "Informational"]
-            if value not in severities:
+            # ["Critical", "High", "Medium", "Low", "Informational"]
+            if value not in self.severities:
                 log.warning(f'Header "{header}" value "{value}" is not a valid severity. Must be in the list ["Critical", "High", "Medium", "Low", "Informational"] Skipping...')
                 return
 
@@ -1572,8 +1577,107 @@ class Parser():
                             continue
                         log.success(f'Successfully added asset(s) info to finding!')
 
-    def save_data_as_ptrac():
+    def save_data_as_ptrac(self):
         """
         Creates and adds all relevant data to generate a ptrac file for each report found while parsing
         """
-        pass
+        ptrac_template = {
+            "report_info": {
+                "doc_type": "report"
+            },
+            "flaws_array": [],
+            "summary": {},
+            "evidence": [],
+            "client_info": {
+                "doc_type": "client",
+                "poc": "",
+                "poc_email": "",
+                "tenant_id": 0
+            }
+        }
+
+        folder_path = "exported-ptracs"
+        try:
+            os.mkdir(folder_path)
+        except FileExistsError as e:
+            log.debug(f'Could not create directory {folder_path}, already exists')
+
+        # creates and export a ptrac for each report parsed
+        log.info(f'---Creating ptracs---')
+        # clients
+        for client in self.clients.values():
+            client_info = deepcopy(client)
+            client_info.pop("assets")
+            client_info.pop("reports")
+            client_info.pop("sid")
+            client_info['doc_type'] = "client"
+            client_info['tenant_id'] = 0
+
+            # reports
+            for report_sid in client['reports']:
+                report = deepcopy(self.reports[report_sid])
+                report_info = deepcopy(report)
+                report_info.pop("findings")
+                report_info.pop("sid")
+                report_info.pop("client_sid")
+                report_info['doc_type'] = "report"
+                report_info['includeEvidence'] = False
+                report_info['reportType'] = "default"
+
+                ptrac = deepcopy(ptrac_template)
+                ptrac['client_info'] = client_info
+                ptrac['report_info'] = report_info
+
+                # findings
+                for finding_sid in self.reports[report_sid]['findings']:
+                    finding_info = deepcopy(self.findings[finding_sid])
+                    finding_info.pop("assets")
+                    finding_info.pop("sid")
+                    finding_info.pop("client_sid")
+                    finding_info.pop("report_sid")
+                    finding_info.pop("affected_asset_sid")
+
+                    # when importing data from a ptrac a finding does not go through the normal finding validation checks that are run when a finding is created
+                    # metadata
+                    finding_info['flaw_id'] = utils.generate_flaw_id(finding_info['title'])
+                    finding_info['doc_type'] = "flaw"
+                    finding_info['source'] = "plextrac"
+                    finding_info['visibility'] = "published"
+                    # dates
+                    if finding_info.get("createdAt") == None:
+                        finding_info['createdAt'] = self.parser_time_milli_seconds
+                    if finding_info['status'] == "Closed":
+                        if finding_info.get("closedAt") == None:
+                            finding_info['closedAt'] = self.parser_time_milli_seconds
+                    else:
+                        finding_info['closedAt'] = None
+                    finding_info['last_update'] = self.parser_time_milli_seconds
+                    # sev
+                    finding_info['sev'] = self.severities.index(finding_info['severity'])
+                    # assignedTo
+                    if finding_info.get("assignedTo") == None:
+                        finding_info['assignedTo'] = None
+                    # data
+                    finding_info['data'] = [
+                        finding_info['flaw_id'],
+                        finding_info['severity'],
+                        finding_info['title'],
+                        finding_info['status'],
+                        finding_info['last_update'],
+                        finding_info['assignedTo'],
+                        finding_info['createdAt'],
+                        finding_info['closedAt'],
+                        None,
+                        None,
+                        finding_info['visibility']
+                    ]
+
+                    ptrac['flaws_array'].append(finding_info)
+
+                
+                # save report as ptrac
+                file_name = f'{utils.sanitize_name_for_file(client["name"])}_{utils.sanitize_name_for_file(report["name"])}_{self.parser_time}.ptrac'
+                file_path = f'{folder_path}/{file_name}'
+                with open(f'{file_path}', 'w') as file:
+                    json.dump(ptrac, file)
+                    log.success(f'Saved \'{report["name"]}\' to \'{file_name}\'')

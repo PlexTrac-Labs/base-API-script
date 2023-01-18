@@ -1,5 +1,6 @@
 import re
 import time
+from hashlib import sha256
 
 import settings
 log = settings.log
@@ -54,3 +55,16 @@ def is_valid_cwe(cwe):
     cwe_num = re.compile(r'[0-9]')
     num_match = cwe_num.match(cwe) is not None
     return pattern_match or num_match
+
+def sanitize_name_for_file(name):
+    # certain characters are not allowed in file names
+    invalid_chars = ["\\", "/", ":", "*", "?", "\"", "<", ">", "|"]
+    
+    new_name = name
+    for char in invalid_chars:
+        new_name = new_name.replace(char, "")
+
+    return new_name.replace(" ", "_")
+
+def generate_flaw_id(title):
+    return int(sha256(title.encode('utf-8')).hexdigest(), 16) % 10 ** 8
