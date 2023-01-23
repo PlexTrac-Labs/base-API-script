@@ -2,8 +2,8 @@ import re
 import time
 from hashlib import sha256
 
-import settings
-log = settings.log
+import utils.log_handler as logger
+log = logger.log
 
 
 def format_key(str):

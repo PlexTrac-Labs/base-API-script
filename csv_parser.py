@@ -1,12 +1,17 @@
+import json
 import time
 import csv
 from uuid import uuid4
 from copy import copy, deepcopy
-import logging
+import os
 import re
 
-import general_utils as utils
-from input_utils import *
+import utils.log_handler as logger
+log = logger.log
+from api import *
+
+import utils.general_utils as utils
+
 
 class Parser():
     
@@ -1488,7 +1493,8 @@ class Parser():
             payload.pop("reports")
             payload.pop("sid")
             log.info(f'Creating client <{payload["name"]}>')
-            response = request_create_client(auth.base_url, auth.get_auth_headers(), payload)
+            
+            response = api.client.create(auth.base_url, auth.get_auth_headers(), payload)
             if response.get("status") != "success":
                 log.warning(f'Could not create client. Skipping all reports and findings under this client...')
                 continue
@@ -1510,7 +1516,7 @@ class Parser():
                 payload.pop("dup_num")
                 payload.pop("is_multi")
                 log.info(f'Creating asset <{payload["asset"]}>')
-                response = request_create_asset(auth.base_url, auth.get_auth_headers(), payload, client_id)
+                response = api.asset.create(auth.base_url, auth.get_auth_headers(), payload, client_id)
                 if response.get("message") != "success":
                     asset['asset_id'] = None
                     log.warning(f'Could not create asset. Skipping...')
@@ -1525,7 +1531,7 @@ class Parser():
                 payload.pop("sid")
                 payload.pop("client_sid")
                 log.info(f'Creating report <{payload["name"]}>')
-                response = request_create_report(auth.base_url, auth.get_auth_headers(), payload, client_id)
+                response = api.report.create(auth.base_url, auth.get_auth_headers(), payload, client_id)
                 if response.get("message") != "success":
                     log.warning(f'Could not create report. Skipping all findings under this report...')
                     continue
@@ -1542,7 +1548,7 @@ class Parser():
                     payload.pop("report_sid")
                     payload.pop("affected_asset_sid")
                     log.info(f'Creating finding <{payload["title"]}>')
-                    response = request_create_finding(auth.base_url, auth.get_auth_headers(), payload, client_id, report_id)
+                    response = api.finding.create(auth.base_url, auth.get_auth_headers(), payload, client_id, report_id)
                     if response.get("message") != "success":
                         log.warning(f'Could not create finding. Skipping...')
                         continue
@@ -1553,7 +1559,7 @@ class Parser():
                     if len(finding['assets']) > 0:
                         log.info(f'Updating finding <{finding["title"]}> with asset information')
 
-                        pt_finding = request_get_finding(auth.base_url, auth.get_auth_headers(), client_id, report_id, finding_id)
+                        pt_finding = api.finding.get(auth.base_url, auth.get_auth_headers(), client_id, report_id, finding_id)
 
                         num_assets_to_update = 0
                         for asset_sid in finding['assets']:
@@ -1561,7 +1567,7 @@ class Parser():
                             if pt_asset_id == None:
                                 log.warning(f'Asset \'{self.assets[asset_sid]["asset"]}\' was not created successfully. Cannot add to finding. Skipping...')
                             else:
-                                pt_asset = request_get_asset(auth.base_url, auth.get_auth_headers(), client_id, pt_asset_id)
+                                pt_asset = api.asset.get(auth.base_url, auth.get_auth_headers(), client_id, pt_asset_id)
                                 pt_finding = self.add_asset_to_finding(pt_finding, pt_asset, finding_sid, asset_sid)
                                 num_assets_to_update += 1
 
@@ -1571,7 +1577,7 @@ class Parser():
                         if num_assets_to_update != len(finding['assets']):
                             log.warning(f'Some assets cannot be adding. Adding {num_assets_to_update}/{len(finding["assets"])}')
 
-                        response = request_update_finding(auth.base_url, auth.get_auth_headers(), pt_finding, client_id, report_id, finding_id)
+                        response = api.finding.update(auth.base_url, auth.get_auth_headers(), pt_finding, client_id, report_id, finding_id)
                         if response.get("message") != "success":
                             log.warning(f'Could not update finding. Skipping...')
                             continue

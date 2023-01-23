@@ -2,8 +2,8 @@ import os
 import json
 import csv
 
-from request_utils import *
-
+import utils.log_handler as logger
+log = logger.log
 
 prompt_prefix = "\n[Prompt] "
 prompt_suffix = ": "
