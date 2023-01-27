@@ -2,9 +2,9 @@ import logging
 
 
 # logging
-console_log_level = logging.DEBUG
+console_log_level = logging.INFO
 file_log_level = logging.INFO
-save_logs_to_file = True
+save_logs_to_file = False
 
 # requests
 # if the Plextrac instance is running on https without valid certs, requests will respond with cert error
@@ -13,11 +13,11 @@ verify_ssl = True
 
 # description of script that will be print line by line when the script is run
 script_info = ["====================================================================",
-               "= General CSV Import Script                                        =",
+               "= Base Script                                                      =",
                "=------------------------------------------------------------------=",
-               "= Takes a CSV with rows representing client, report, finding and   =",
-               "= asset data and a CSV with how to map each column to a            =",
-               "= location in Plextrac. Parses the CSV and import data to Plextrac =",
+               "= Use this script as a starting point to utilize existing          =",
+               "= funtionality when developing a script for the Plextrac API       =",
+               "=                                                                  =",
                "===================================================================="
             ]
 

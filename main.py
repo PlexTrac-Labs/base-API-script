@@ -6,7 +6,6 @@ import utils.log_handler as logger
 log = logger.log
 import settings
 from utils.auth_utils import Auth
-from csv_parser import Parser
 import utils.input_utils as input
 from api import *
 
