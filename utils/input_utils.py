@@ -2,9 +2,6 @@ import os
 import json
 import csv
 
-import utils.log_handler as logger
-log = logger.log
-
 prompt_prefix = "\n[Prompt] "
 prompt_suffix = ": "
 
@@ -13,8 +10,18 @@ def prompt_user(msg):
     return input(prompt_prefix + msg + prompt_suffix)
 
 
-# prompts users for an input. checks the entered input against valid options. returns a valid choice
-def prompt_user_options(msg, retry_msg="", options=[]):
+def user_options(msg, retry_msg="", options=[]):
+    """
+    Prompts a user for an input from a given list of options, and returns the valid choice.
+    
+    Parameters:
+    msg (str): Message to display with the prompt
+    retry_msg (str): Message to display if user enters invalid input, defaults to empty string
+    options (list): List of valid options
+    
+    Returns:
+    str: The valid option chosen by the user
+    """
     #setup
     str_options = ""
     for i in options:
@@ -29,59 +36,94 @@ def prompt_user_options(msg, retry_msg="", options=[]):
         return entered
 
     #ask again
-    if prompt_retry(retry_msg):
-        return prompt_user_options(msg, retry_msg, options)
+    if retry(retry_msg):
+        return user_options(msg, retry_msg, options)
 
 
-# prompts users for an input. checks the entered input is in a valid range. returns a valid choice
-def prompt_user_list(msg, retry_msg="", range=0):
+def user_list(msg, retry_msg="", range=0):
+    """
+    Prompts a user for an input from a given range, and returns the valid choice. Use after printing
+    a list of options. This list should display incrementing numbers with each item, from 1 to number
+    of options.
+
+    ex.
+    1 - first option
+    2 - second option
+    etc.
+
+    The number return is the 1-based index. If looping through a list you will need to subtract one
+    to reference the correct choice.
+    
+    Parameters:
+    msg (str): Message to display with the prompt
+    retry_msg (str): Message to display if user enters invalid input, defaults to empty string
+    range (int): Number of valid options
+    
+    Returns:
+    int: The valid option chosen by the user
+    """
     #setup
-    str_options = "0-" + str(range-1)
+    str_options = "1-" + str(range)
     
     #get input
     entered = input(prompt_prefix + msg + " (" + str_options + ")" + prompt_suffix)
     
     #validate input
-    if int(entered) >= 0 and int(entered) < range:
+    if int(entered) > 0 and int(entered) <= range:
         return int(entered)
 
     #ask again
-    if prompt_retry(retry_msg):
-        return prompt_user_list(msg, retry_msg, range)
+    if retry(retry_msg):
+        return user_list(msg, retry_msg, range)
 
 
-# prompts user if they want to ignore the last, potentially problematic, input option
-def prompt_continue_anyways(msg):
+def continue_anyways(msg):
+    """
+    Prompts a user whether they want to continue despite a potentially problematic input.
+    
+    Parameters:
+    msg (str): Message to display with the prompt
+    
+    Returns:
+    bool: True if user wants to continue, False if user does not want to continue
+    """
     entered = input(prompt_prefix + msg + " Continue Anyways? (y/n)" + prompt_suffix)
     if entered == 'y':
         return True
     elif entered == 'n':
         return False
     else:
-        return prompt_continue_anyways(msg)
+        return continue_anyways(msg)
 
         
-# prompts the users if they want to retry the last input option
-def prompt_retry(msg):
+def retry(msg):
+    """
+    Prompts a user if they want to retry the last input option. This will either return a True boolean
+    or exit the script.
+    
+    Parameters:
+    msg (str): Message to display with the prompt
+    
+    Returns:
+    bool: True if user wants to retry
+    """
     entered = input(prompt_prefix + msg + " Try Again? (y/n)" + prompt_suffix)
     if entered == 'y':
         return True
-    elif entered == 'n':
-        exit()
     else:
-        return prompt_retry(msg)
+        exit()
 
 
 
 
 # gets the file path of a json to be imported, checks if the file exists, and trys to load and return the data
-def handle_load_json_data(msg, json_file_path=""):
+def load_json_data(msg, json_file_path=""):
     if json_file_path == "":
         json_file_path = prompt_user(prompt_prefix + msg + "(relative file path, including file extention)" + prompt_suffix)
 
     if not os.path.exists(json_file_path):
-        if prompt_retry(f'Specified JSON file at \'{json_file_path}\' does not exist.'):
-            return handle_load_json_data(msg)
+        if retry(f'Specified JSON file at \'{json_file_path}\' does not exist.'):
+            return load_json_data(msg)
     
     try:
         with open(json_file_path, 'r', encoding="utf8") as file:
@@ -90,20 +132,20 @@ def handle_load_json_data(msg, json_file_path=""):
                 "data": json.load(file)
             }
     except Exception as e:
-        if prompt_retry(f'Error loading file: {e}'):
-            return handle_load_json_data(msg)
+        if retry(f'Error loading file: {e}'):
+            return load_json_data(msg)
     
     return json_data
 
 
 # gets the file path of a csv to be imported, checks if the file exists, and trys to load and return the data
-def handle_load_csv_data(msg, csv_file_path=""):
+def load_csv_data(msg, csv_file_path=""):
     if csv_file_path == "":
         csv_file_path = prompt_user(msg + " (relative file path, including file extention)")
 
     if not os.path.exists(csv_file_path):
-        if prompt_retry(f'Specified CSV file at \'{csv_file_path}\' does not exist.'):
-            return handle_load_csv_data(msg)
+        if retry(f'Specified CSV file at \'{csv_file_path}\' does not exist.'):
+            return load_csv_data(msg)
 
     try:
         with open(csv_file_path, 'r', newline='', encoding='utf-8') as f:
@@ -125,5 +167,5 @@ def handle_load_csv_data(msg, csv_file_path=""):
             }
 
     except Exception as e:
-        if prompt_retry(f'Error loading file: {e}'):
-            return handle_load_csv_data(msg)
+        if retry(f'Error loading file: {e}'):
+            return load_csv_data(msg)

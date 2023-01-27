@@ -68,3 +68,4 @@ def sanitize_name_for_file(name):
 
 def generate_flaw_id(title):
     return int(sha256(title.encode('utf-8')).hexdigest(), 16) % 10 ** 8
+    
