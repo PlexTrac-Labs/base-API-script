@@ -119,7 +119,7 @@ def retry(msg):
 # gets the file path of a json to be imported, checks if the file exists, and trys to load and return the data
 def load_json_data(msg, json_file_path=""):
     if json_file_path == "":
-        json_file_path = prompt_user(prompt_prefix + msg + "(relative file path, including file extention)" + prompt_suffix)
+        json_file_path = prompt_user(msg + "(relative file path, including file extention)")
 
     if not os.path.exists(json_file_path):
         if retry(f'Specified JSON file at \'{json_file_path}\' does not exist.'):
