@@ -54,6 +54,12 @@ class Auth():
         #validate
         try:
             response = api.auth.root(self.base_url, {}) # non authenticated endpoint - does not require any headers - used to see if we can connect to the api
+            log.debug(response)
+            if response.get("statusCode") != None: # when the response is non 200, response can still be read as json payload
+                if input.retry("Could not validate URL. Either the API is offline or it was entered incorrectly\nExample: https://company.plextrac.com"):
+                    self.cf_token = None
+                    self.base_url = None
+                    return self.handle_instance_url()
 
             try:
                 if response.get('text') == "Authenticate at /authenticate":
@@ -61,19 +67,19 @@ class Auth():
                     
             except Exception as e: # potential plextrac internal instance running behind Cloudflare
                 if self.cf_token == None:
-                    option = input.prompt_user_options("That URL points to a running verson of Plextrac. However, the API did not respond.\nThere might be an additional layer of security. Try adding Cloudflare auth token?", "Do you want to try adding a Cloudflare token?", ['y', 'n'])    
+                    option = input.user_options("That URL points to a running verson of Plextrac. However, the API did not respond.\nThere might be an additional layer of security. Try adding Cloudflare auth token?", "Do you want to try adding a Cloudflare token?", ['y', 'n'])    
                     if option == 'y':
                         return self.handle_cf_instance_url()
                 else:
                     return self.handle_cf_instance_url()
             
-                if input.prompt_retry("Could not validate instance URL."):
+                if input.retry("Could not validate instance URL."):
                     self.cf_token = None
                     return self.handle_instance_url()
 
         except Exception as e:
             log.exception(e)
-            if input.prompt_retry("Could not validate URL. Either the API is offline or it was entered incorrectly\nExample: https://company.plextrac.com"):
+            if input.retry("Could not validate URL. Either the API is offline or it was entered incorrectly\nExample: https://company.plextrac.com"):
                 self.base_url = None
                 return self.handle_instance_url()
 
@@ -96,7 +102,7 @@ class Auth():
                 log.success("Validated instance URL")
                 
         except Exception as e:
-            if input.prompt_retry("Could not validate instance URL."):
+            if input.retry("Could not validate instance URL."):
                 self.cf_token = None
                 return self.handle_instance_url()
 
@@ -128,7 +134,7 @@ class Auth():
         # - other
         # the api response is purposely non-descript to prevent gaining information about the authentication process
         if response.get('status') != "success":
-            if input.prompt_retry("Could not authenticate with entered credentials."):
+            if input.retry("Could not authenticate with entered credentials."):
                 self.username = None
                 self.password = None
                 self.tenant_id = None
@@ -146,7 +152,7 @@ class Auth():
             
             response = api.auth.mfa_authenticate(self.base_url, self.auth_headers, mfa_auth_data)
             if response.get('status') != "success":
-                if input.prompt_retry("Invalid MFA Code."):
+                if input.retry("Invalid MFA Code."):
                     return self.handle_authentication()
 
         self.add_auth_header(response['token'])
