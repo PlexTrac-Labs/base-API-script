@@ -4,7 +4,7 @@ import time
 
 import utils.log_handler as logger
 log = logger.log
-from api import *
+import api
 import utils.input_utils as input
 
 class Auth():
@@ -44,8 +44,10 @@ class Auth():
         return self.auth_headers
 
 
-    # prompts user for their plextrac url, checks that the API is up and running, then sets the url
     def handle_instance_url(self):
+        """
+        prompts user for their plextrac url, checks that the API is up and running, then sets the url
+        """
         if self.base_url == None:
             self.base_url = input.prompt_user("Please enter the full URL of your PlexTrac instance (with protocol)")
         else:
@@ -53,16 +55,16 @@ class Auth():
 
         #validate
         try:
-            response = api.auth.root(self.base_url, {}) # non authenticated endpoint - does not require any headers - used to see if we can connect to the api
+            response = api._v1.authentication.root_request(self.base_url, {}) # non authenticated endpoint - does not require any headers - used to see if we can connect to the api
             log.debug(response)
-            if response.get("statusCode") != None: # when the response is non 200, response can still be read as json payload
+            if not response.has_response_json: # if the base_url is not valid, the response will not contain any JSON
                 if input.retry("Could not validate URL. Either the API is offline or it was entered incorrectly\nExample: https://company.plextrac.com"):
                     self.cf_token = None
                     self.base_url = None
                     return self.handle_instance_url()
 
             try:
-                if response.get('text') == "Authenticate at /authenticate":
+                if response.json.get('text') == "Authenticate at /authenticate":
                     log.success("Validated instance URL")
                     
             except Exception as e: # potential plextrac internal instance running behind Cloudflare
@@ -84,27 +86,25 @@ class Auth():
                 return self.handle_instance_url()
 
 
-    # handles extra layer of Cloudflare authorization
-    # plextrac test instances are hosted behind a Cloudflare wall that requires another layer of authorization
     def handle_cf_instance_url(self):
+        """
+        handles extra layer of Cloudflare authorization
+        plextrac test instances are hosted behind a Cloudflare wall that requires another layer of authorization
+        """
         if self.cf_token == None:
             self.cf_token = input.prompt_user("Please enter your active 'CF_Authorization' token")
         else:
             log.info(f'Using cf_token from config...')
 
-        response = api.auth.root(self.base_url, headers={"cf-access-token": self.cf_token})
+        response = api._v1.authentication.root_request(self.base_url, headers={"cf-access-token": self.cf_token})
             
-        try:
-            response_json = json.loads(response.text)
-
-            if response_json['text'] == "Authenticate at /authenticate":
-                self.add_cf_auth_header(self.cf_token)
-                log.success("Validated instance URL")
-                
-        except Exception as e:
+        if response.json.get('text') != "Authenticate at /authenticate":
             if input.retry("Could not validate instance URL."):
                 self.cf_token = None
                 return self.handle_instance_url()
+
+        self.add_cf_auth_header(self.cf_token)
+        log.success("Validated instance URL")
 
 
     def handle_authentication(self):
@@ -126,35 +126,35 @@ class Auth():
             "password": self.password
         }
         
-        response = api.auth.authenticate(self.base_url, self.auth_headers, authenticate_data)
+        response = api._v1.authentication.authentication(self.base_url, self.auth_headers, authenticate_data)
         
         # the following conditional can fail due to:
         # - invalid credentials
         # - if the instance is setup to requre mfa and use user does not have mfa setup
         # - other
         # the api response is purposely non-descript to prevent gaining information about the authentication process
-        if response.get('status') != "success":
+        if response.json.get('status') != "success":
             if input.retry("Could not authenticate with entered credentials."):
                 self.username = None
                 self.password = None
                 self.tenant_id = None
                 return self.handle_authentication()
         
-        self.tenant_id = response.get('tenant_id')
+        self.tenant_id = response.json.get('tenant_id')
 
-        if response.get('mfa_enabled'):
+        if response.json.get('mfa_enabled'):
             log.info('MFA detected for user')
 
             mfa_auth_data = {
-                "code": response.get('code'),
+                "code": response.json.get('code'),
                 "token": input.prompt_user("Please enter your 6 digit MFA code")
             }
             
-            response = api.auth.mfa_authenticate(self.base_url, self.auth_headers, mfa_auth_data)
-            if response.get('status') != "success":
+            response = api._v1.authentication.multi_factor_authentication(self.base_url, self.auth_headers, mfa_auth_data)
+            if response.json.get('status') != "success":
                 if input.retry("Invalid MFA Code."):
                     return self.handle_authentication()
 
-        self.add_auth_header(response['token'])
+        self.add_auth_header(response.json.get('token'))
         self.time_since_last_auth = time.time()
         log.success('Authenticated')

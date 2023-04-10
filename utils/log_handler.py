@@ -6,6 +6,11 @@ import re
 
 import settings
 
+# logging settings - these setting should be defined in setting.py - these default values are used if this file is missing
+# console_log_level = logging.DEBUG
+# file_log_level = logging.INFO
+# save_logs_to_file = False
+
 
 class ColorPrint:
     def print_red(message):
