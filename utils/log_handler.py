@@ -12,6 +12,37 @@ import settings
 # save_logs_to_file = False
 
 
+class IterationMetrics:
+    """
+    A class to handle printing time based metric logs when doing iterative operations.
+    """
+    def __init__(self, iterations: int):
+        """
+        Create an IterationMetrics object to track elapsed time for an interation operation
+
+        :param iterations: number of iteration that will be preformed. Used to calculate an estimated time remaining
+        :type iterations: int
+        """
+        self.max_iterations = iterations
+        self.curr_iteration = 0
+        self.start_time = time.time()
+        self.last_time = self.start_time
+        self.total_time = 0
+        self.avg_time = 0
+        self.time_remaining = self.avg_time * (self.max_iterations - (self.curr_iteration+1))
+
+    def print_iter_metrics(self) -> str:
+        curr_time = time.time()
+        iter_time = curr_time - self.last_time
+        self.total_time += iter_time
+        self.avg_time = self.total_time/(self.curr_iteration+1)
+        self.time_remaining = self.avg_time * (self.max_iterations - (self.curr_iteration+1))
+
+        self.curr_iteration += 1
+        self.last_time = curr_time
+        return f'METRICS: ({self.curr_iteration}/{self.max_iterations}) Completed in {round(iter_time, 1)} sec(s) - Total time: {round(self.total_time/60, 1)} min(s) - Est. Time Remaining: {round(self.time_remaining/60, 1)} min(s)'        
+
+
 class ColorPrint:
     def print_red(message):
         return f'\x1b[1;31m{message}\x1b[0m'

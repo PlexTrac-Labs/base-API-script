@@ -104,6 +104,34 @@ if __name__ == '__main__':
 
 
     """
+    Bulk Iteration Metrics
+
+    You are able to print metrics about an action using the IterationMetrics object in the log_handler.py. This will manage time tracking and gives you a simple function
+    that returns a string of the current iterations metrics. If you are doing an action in a loop, i.e. calling the same endpoint, this can be used to show metrics for
+    how long the script has been running and how long it should take to complete.
+
+    Use the import statement, then create a new IterationMetrics object. Note the counter starts upon creation, so this line should go right before the loop:
+    from utils.log_handler import IterationMetrics
+
+    metrics = IterationMetrics(<num_items_in_list>)
+
+    Now calling the print_iter_metrics() function will calculate the stats of the current interation, increment to the next iteration, and return a string with the
+    calculated metrics. This should be called at the end of a loop.
+    """
+    import time # only imported in this example to use sleep
+
+    from utils.log_handler import IterationMetrics
+
+    items = range(5)
+    metrics = IterationMetrics(len(items)) # time starts ticking when the IterationMetrics object is created
+    for i in items:
+        log.info("Working...")
+        time.sleep(3)
+        log.success(f'Finished the work.')
+        log.info(metrics.print_iter_metrics())
+
+
+    """
     Built-in User Input Handling
 
     You can use a wrapper for the Python input() function by utilizing the input_utils.py. This will add a prefix to all user prompts and
