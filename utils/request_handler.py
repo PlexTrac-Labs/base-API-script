@@ -8,7 +8,7 @@ import settings
 import utils.log_handler as logger
 log = logger.log
 
-from api.exceptions import PTWrapperLibraryException
+from api.exceptions import *
 
 
 class PTWrapperLibraryResponse():
@@ -41,8 +41,8 @@ def _do(http_method: str, base_url: str, headers: dict, endpoint: str, name: str
     :param files: file data send in a multipart form request, defaults to None
     :type files: _type_, optional
     :raises PTWrapperLibraryException: general request failure
-    :raises PTWrapperLibraryException: request doesn't return JSON data
-    :raises PTWrapperLibraryException: non 200 response
+    :raises PTWrapperLibraryJSONResponse: request doesn't return JSON data
+    :raises PTWrapperLibraryFailed: non 200 response
     :return: custom wrapper for Python requests.Response object
     :rtype: PTWrapperLibraryResponse
     """      
@@ -74,7 +74,7 @@ def _do(http_method: str, base_url: str, headers: dict, endpoint: str, name: str
                 time.sleep(5)
                 continue # if this part doesn't succeed you can't continue. prevents incrementing `retries` more than once in a single attempt
             else:
-                raise PTWrapperLibraryException(f'Bad JSON response - {name}') from e
+                raise PTWrapperLibraryJSONResponse(f'Bad JSON response - {name}') from e
         # If status_code in 200-299 range, return success PTWrapperLibraryResponse with data, otherwise raise exception
         is_success = 299 >= response.status_code >= 200
         log_line = log_line_post.format(is_success, response.status_code, response.reason)
@@ -87,7 +87,7 @@ def _do(http_method: str, base_url: str, headers: dict, endpoint: str, name: str
             time.sleep(5)
             continue # if this part doesn't succeed you can't continue. prevents incrementing `retries` more than once in a single attempt
         else:
-            raise PTWrapperLibraryException(f'{name} - {response.status_code}: {response.reason}')
+            raise PTWrapperLibraryFailed(f'{name} - {response.status_code}: {response.reason}')
     
 def get(base_url: str, headers: dict, endpoint: str, name: str) -> PTWrapperLibraryResponse:
     """

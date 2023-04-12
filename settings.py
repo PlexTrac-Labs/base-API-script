@@ -2,7 +2,7 @@ import logging
 
 
 # LOGGING
-console_log_level = logging.DEBUG
+console_log_level = logging.INFO
 file_log_level = logging.INFO
 save_logs_to_file = False
 
@@ -16,7 +16,7 @@ retries = 5
 
 # description of script that will be print line by line when the script is run
 script_info = ["====================================================================",
-               "= Base Script                                                      =",
+               "= Base API Script                                                  =",
                "=------------------------------------------------------------------=",
                "= Use this script as a starting point to utilize existing          =",
                "= funtionality when developing a script for the Plextrac API       =",

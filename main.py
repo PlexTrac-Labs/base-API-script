@@ -16,6 +16,19 @@ if __name__ == '__main__':
 
 
     """
+    Config File
+
+    The `args` variable (created above) stores all the info entered on the config.yaml file. This is a dictionary created from
+    the parsed yaml file.
+    
+    This is passed to the `Auth` object to try and load the instance URL, username, and password for authentication, but you
+    can add other fields you need as well.
+    """
+    log.info(args)
+    log.info(args.get('instance_url'))
+
+
+    """
     Authenticate to Plextrac Instance
 
     To handle authentication you can create an Auth object that stores different things needed to make calls to API endpoints.
