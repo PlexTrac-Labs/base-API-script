@@ -51,7 +51,7 @@ def _do(http_method: str, base_url: str, headers: dict, endpoint: str, name: str
     log_line_post = ', '.join((log_line_pre, "success={}, status_code={}, message={}"))
     
     retries = 0
-    while retries < settings.retries:
+    while retries <= settings.retries:
         # Log HTTP params and perform an HTTP request, catching and re-raising any exceptions
         try:
             log.debug(log_line_pre)
@@ -87,6 +87,7 @@ def _do(http_method: str, base_url: str, headers: dict, endpoint: str, name: str
             time.sleep(5)
             continue # if this part doesn't succeed you can't continue. prevents incrementing `retries` more than once in a single attempt
         else:
+            log.exception(f'{log_line}, pt_message={data_out.get("message")}')
             raise PTWrapperLibraryFailed(f'{name} - {response.status_code}: {response.reason}')
     
 def get(base_url: str, headers: dict, endpoint: str, name: str) -> PTWrapperLibraryResponse:
