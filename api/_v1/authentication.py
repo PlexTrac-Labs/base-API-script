@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def authentication(base_url, headers, payload):
+def authentication(base_url, headers, payload) -> PTWrapperLibraryResponse:
     """
     For more info visit: [https://docs.plextrac.com/plextrac-documentation/master/plextrac-api-overview#getting-started](https://docs.plextrac.com/plextrac-documentation/master/plextrac-api-overview#getting-started)
 
@@ -26,7 +26,7 @@ When successful, the following parameters will be returned:
     path = f'/authenticate'
     return request.post(base_url, headers, root+path, name, payload)
 
-def multi_factor_authentication(base_url, headers, payload):
+def multi_factor_authentication(base_url, headers, payload) -> PTWrapperLibraryResponse:
     """
     This request **validates access via multifactor authentication (MFA)** and requires additional verification. Below is a list of information needed to fulfil the request.
 
@@ -50,7 +50,7 @@ When successful, the following parameters will be returned:
     path = f'/authenticate/mfa'
     return request.post(base_url, headers, root+path, name, payload)
 
-def root_request(base_url, headers):
+def root_request(base_url, headers) -> PTWrapperLibraryResponse:
     """
     Root request. You can determine that the instance is up and running if this request returns the following JSON
 

@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def list_clients(base_url, headers, payload):
+def list_clients(base_url, headers, payload) -> PTWrapperLibraryResponse:
     """
     This request retrieves a list of **all** **clients** within a tenant. The body contains information on how to filter and sort the data to return.
 
@@ -28,7 +28,7 @@ value: "ba", // required string allows "empty string" if filtering by "tags" mus
     path = f'/clients'
     return request.post(base_url, headers, root+path, name, payload)
 
-def list_client_users(base_url, headers, tenantId, clientId):
+def list_client_users(base_url, headers, tenantId, clientId) -> PTWrapperLibraryResponse:
     """
     This request retrieves a list of **all** **users** for a specific client.
     """
@@ -37,7 +37,7 @@ def list_client_users(base_url, headers, tenantId, clientId):
     path = f'/tenants/{tenantId}/clients/{clientId}/users'
     return request.get(base_url, headers, root+path, name)
 
-def list_client_findings(base_url, headers, clientId, payload):
+def list_client_findings(base_url, headers, clientId, payload) -> PTWrapperLibraryResponse:
     """
     This request retrieves **all findings** for **a specific client**. The specific finding info returned is a truncated version of the full finding info. Sorting and filters can be added to the request body.
     """
@@ -46,7 +46,7 @@ def list_client_findings(base_url, headers, clientId, payload):
     path = f'/client/{clientId}/findings'
     return request.post(base_url, headers, root+path, name, payload)
 
-def list_client_assets(base_url, headers, clientId, payload):
+def list_client_assets(base_url, headers, clientId, payload) -> PTWrapperLibraryResponse:
     """
     This request retrieves **assets associated with a specific client**.
     """
@@ -55,7 +55,7 @@ def list_client_assets(base_url, headers, clientId, payload):
     path = f'/clients/{clientId}/assets'
     return request.post(base_url, headers, root+path, name, payload)
 
-def bulk_assign_users_to_client(base_url, headers, tenantId, clientId, payload):
+def bulk_assign_users_to_client(base_url, headers, tenantId, clientId, payload) -> PTWrapperLibraryResponse:
     """
     This request **assigns a list of users to have a certain level of permission for a specific client**.
 

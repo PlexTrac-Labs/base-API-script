@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def get_all_narrativedb_users(base_url, headers, payload):
+def get_all_narrativedb_users(base_url, headers, payload) -> PTWrapperLibraryResponse:
     """
     This request **retrieves** **all users** that have been added to repositories in the **NarrativesDB** module.
 
@@ -11,7 +11,7 @@ Users can be added in the platform by admins via the "Users & Permissions" optio
     path = f'/narratives/users/all'
     return request.post(base_url, headers, root+path, name, payload)
 
-def get_narrativedb_users_by_repository(base_url, headers, narrativeRepositoryId, payload):
+def get_narrativedb_users_by_repository(base_url, headers, narrativeRepositoryId, payload) -> PTWrapperLibraryResponse:
     """
     This request **retrieves users** for **a specific repository** in the **NarrativesDB** module.
 
@@ -22,7 +22,7 @@ Users can be added in the platform by admins via the "Users & Permissions" optio
     path = f'/narratives/{narrativeRepositoryId}/users'
     return request.post(base_url, headers, root+path, name, payload)
 
-def update_narrativedb_users_by_repository(base_url, headers, narrativeRepositoryId, payload):
+def update_narrativedb_users_by_repository(base_url, headers, narrativeRepositoryId, payload) -> PTWrapperLibraryResponse:
     """
     This request **adds users** to a specific repository in the **NarrativesDB** module.
 

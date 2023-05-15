@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def update_tenant(base_url, headers, tenantId, name, address, poc):
+def update_tenant(base_url, headers, tenantId, name, address, poc) -> PTWrapperLibraryResponse:
     """
     Update the details of your tenant, including `name`, `address`, and `point of contact`
 
@@ -14,7 +14,7 @@ def update_tenant(base_url, headers, tenantId, name, address, poc):
     path = f'/tenant/{tenantId}?name={name}?address={address}?poc={poc}'
     return request.put(base_url, headers, root+path, name)
 
-def get_tenant(base_url, headers, tenantId):
+def get_tenant(base_url, headers, tenantId) -> PTWrapperLibraryResponse:
     """
     This request **obtains information about a tenant**, such as ID, settings, point of contact information, etc.
     """
@@ -23,7 +23,7 @@ def get_tenant(base_url, headers, tenantId):
     path = f'/tenant/{tenantId}'
     return request.get(base_url, headers, root+path, name)
 
-def get_notification_settings(base_url, headers, tenantId):
+def get_notification_settings(base_url, headers, tenantId) -> PTWrapperLibraryResponse:
     """
     This request **retrieves the number of days to wait** before reminding users to provide status updates on assigned findings.
     """
@@ -32,7 +32,7 @@ def get_notification_settings(base_url, headers, tenantId):
     path = f'/tenant/{tenantId}/notificationsettings'
     return request.get(base_url, headers, root+path, name)
 
-def update_notification_settings(base_url, headers, tenantId, reminderDays):
+def update_notification_settings(base_url, headers, tenantId, reminderDays) -> PTWrapperLibraryResponse:
     """
     Update the number of days to wait before reminding users to provide status updates on findings assigned to them
 
@@ -44,7 +44,7 @@ def update_notification_settings(base_url, headers, tenantId, reminderDays):
     path = f'/tenant/{tenantId}/notificationsettings?reminderDays={reminderDays}'
     return request.put(base_url, headers, root+path, name)
 
-def tenant_analytics(base_url, headers, tenantId):
+def tenant_analytics(base_url, headers, tenantId) -> PTWrapperLibraryResponse:
     """
     This request retrieves **analytics for a tenant,** providing a total count of findings by risk and status.
     """
@@ -53,29 +53,7 @@ def tenant_analytics(base_url, headers, tenantId):
     path = f'/tenant/{tenantId}/analytics'
     return request.get(base_url, headers, root+path, name)
 
-def list_tenant_users(base_url, headers, tenantId):
-    """
-    This request **retrieves a list of all users** in a tenant.
-    """
-    name = "List Tenant Users"
-    root = "/api/v1"
-    path = f'/tenant/{tenantId}/user/list'
-    return request.get(base_url, headers, root+path, name)
-
-def list_tenant_tags(base_url, headers, tenantId, limit, offset):
-    """
-    This request retrieves **a list of all tags for a tenant** with filter options.
-
-    Query Parameters:
-    limit: No description in Postman - example (10)
-    offset: No description in Postman - example (0)
-    """
-    name = "List Tenant Tags"
-    root = "/api/v1"
-    path = f'/tenant/{tenantId}/tag?limit={limit}?offset={offset}'
-    return request.get(base_url, headers, root+path, name)
-
-def list_tenant_clients(base_url, headers, tenantId):
+def list_tenant_clients(base_url, headers, tenantId) -> PTWrapperLibraryResponse:
     """
     List all clients of a given tenant
     """
@@ -84,7 +62,7 @@ def list_tenant_clients(base_url, headers, tenantId):
     path = f'/tenant/{tenantId}/client/list'
     return request.get(base_url, headers, root+path, name)
 
-def disable_multifactor_authentication(base_url, headers, tenantId, email):
+def disable_multifactor_authentication(base_url, headers, tenantId, email) -> PTWrapperLibraryResponse:
     """
     Disable MFA for an authorized user in your tenant
 
@@ -96,7 +74,7 @@ def disable_multifactor_authentication(base_url, headers, tenantId, email):
     path = f'/tenant/{tenantId}/user/mfa/disable?email={email}'
     return request.put(base_url, headers, root+path, name)
 
-def reset_user_password(base_url, headers, tenantId, payload):
+def reset_user_password(base_url, headers, tenantId, payload) -> PTWrapperLibraryResponse:
     """
     Generate a new 20-character password for a given user
     """
@@ -105,7 +83,7 @@ def reset_user_password(base_url, headers, tenantId, payload):
     path = f'/tenant/{tenantId}/user/resetpass'
     return request.put(base_url, headers, root+path, name, payload)
 
-def add_logo(base_url, headers, tenantId, payload):
+def add_logo(base_url, headers, tenantId, payload) -> PTWrapperLibraryResponse:
     """
     Add a logo for your tenancy
     """
@@ -114,36 +92,7 @@ def add_logo(base_url, headers, tenantId, payload):
     path = f'/tenant/{tenantId}/logo'
     return request.post(base_url, headers, root+path, name, payload)
 
-def create_user_deprecated(base_url, headers, tenantId, payload):
-    """
-    Create a new user in your tenant
-
-**This route is deprecated and will be blocked in a future release, please now call:{domain}/tenant/{tenantId}/user/create/bulk**
-    """
-    name = "Create User (DEPRECATED)"
-    root = "/api/v1"
-    path = f'/tenant/{tenantId}/user/create'
-    return request.post(base_url, headers, root+path, name, payload)
-
-def create_user(base_url, headers, tenantId, payload):
-    """
-    Create a new user in your tenant
-    """
-    name = "Create User"
-    root = "/api/v1"
-    path = f'/tenant/{tenantId}/user/create/bulk'
-    return request.post(base_url, headers, root+path, name, payload)
-
-def enabledisable_user(base_url, headers, tenantId, payload):
-    """
-    Toggle a user's authorization to your tenancy
-    """
-    name = "Enable/Disable User"
-    root = "/api/v1"
-    path = f'/tenant/{tenantId}/user/toggledisable'
-    return request.post(base_url, headers, root+path, name, payload)
-
-def delete_logo(base_url, headers, tenantId):
+def delete_logo(base_url, headers, tenantId) -> PTWrapperLibraryResponse:
     """
     Remove the logo from your tenancy. This action will result in the PlexTrac logo being displayed.
     """
@@ -152,7 +101,7 @@ def delete_logo(base_url, headers, tenantId):
     path = f'/tenant/{tenantId}/logo'
     return request.delete(base_url, headers, root+path, name)
 
-def get_tenant_parsers(base_url, headers, tenantId):
+def get_tenant_parsers(base_url, headers, tenantId) -> PTWrapperLibraryResponse:
     """
     This request retrieves **a list of available parsers**.
 
@@ -163,7 +112,7 @@ Returned source field can be used for endpoints requiring `parserId`.
     path = f'/tenant/{tenantId}/actions'
     return request.get(base_url, headers, root+path, name)
 
-def get_tenant_parser_actions(base_url, headers, tenantId, parserId, limit, skip, type, query):
+def get_tenant_parser_actions(base_url, headers, tenantId, parserId, limit, skip, type, query) -> PTWrapperLibraryResponse:
     """
     This request retrieves **a list of parser actions for a tenant** per identified parser source**.**
 
@@ -178,7 +127,7 @@ def get_tenant_parser_actions(base_url, headers, tenantId, parserId, limit, skip
     path = f'/tenant/{tenantId}/actions/{parserId}?limit={limit}?skip={skip}?type={type}?query={query}'
     return request.get(base_url, headers, root+path, name)
 
-def get_tenant_parser_action(base_url, headers, tenantId, parserId, actionId):
+def get_tenant_parser_action(base_url, headers, tenantId, parserId, actionId) -> PTWrapperLibraryResponse:
     """
     No description in Postman
     """
@@ -187,7 +136,7 @@ def get_tenant_parser_action(base_url, headers, tenantId, parserId, actionId):
     path = f'/tenant/{tenantId}/actions/{parserId}/action/{actionId}'
     return request.get(base_url, headers, root+path, name)
 
-def create_tenant_parser_action(base_url, headers, tenantId, parserId, payload):
+def create_tenant_parser_action(base_url, headers, tenantId, parserId, payload) -> PTWrapperLibraryResponse:
     """
     This request **creates a parser action for a tenant.**
 
@@ -202,7 +151,7 @@ Required fields: `id`, `severity`, `title`
     path = f'/tenant/{tenantId}/actions/{parserId}/action'
     return request.post(base_url, headers, root+path, name, payload)
 
-def update_parser_action(base_url, headers, tenantId, parserId, actionId, payload):
+def update_parser_action(base_url, headers, tenantId, parserId, actionId, payload) -> PTWrapperLibraryResponse:
     """
     This request **updates a specific parser and specific action for a tenant.**
     """
@@ -211,7 +160,7 @@ def update_parser_action(base_url, headers, tenantId, parserId, actionId, payloa
     path = f'/tenant/{tenantId}/actions/{parserId}/action/{actionId}'
     return request.put(base_url, headers, root+path, name, payload)
 
-def bulk_update_tenant_parser_actions(base_url, headers, tenantId, parserId, payload):
+def bulk_update_tenant_parser_actions(base_url, headers, tenantId, parserId, payload) -> PTWrapperLibraryResponse:
     """
     This request **bulk** **updates a specific parser and specific action for a tenant.**
     """
@@ -220,7 +169,7 @@ def bulk_update_tenant_parser_actions(base_url, headers, tenantId, parserId, pay
     path = f'/tenant/{tenantId}/actions/{parserId}/bulk'
     return request.put(base_url, headers, root+path, name, payload)
 
-def change_parser_integration_config(base_url, headers, tenantId, payload):
+def change_parser_integration_config(base_url, headers, tenantId, payload) -> PTWrapperLibraryResponse:
     """
     enable or disable global mapping of scanner findings to writeups
     """

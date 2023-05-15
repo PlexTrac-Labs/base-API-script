@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def list_writeups(base_url, headers):
+def list_writeups(base_url, headers) -> PTWrapperLibraryResponse:
     """
     This request retrieves **all** WriteupsDB entries for a tenant.
 
@@ -27,7 +27,7 @@ Below is a list of the information that will be returned on a successful call:
     path = f'/template/list'
     return request.get(base_url, headers, root+path, name)
 
-def get_writeups(base_url, headers, writeupId):
+def get_writeups(base_url, headers, writeupId) -> PTWrapperLibraryResponse:
     """
     This request retrieves **a defined** writeup.
 
@@ -54,7 +54,7 @@ Below is a list of the information that will be returned on a successful call:
     path = f'/template/{writeupId}'
     return request.get(base_url, headers, root+path, name)
 
-def create_writeups(base_url, headers, payload):
+def create_writeups(base_url, headers, payload) -> PTWrapperLibraryResponse:
     """
     This request **adds a new** writeup to a specific repository.
 
@@ -81,7 +81,7 @@ Below is a list of information needed to fulfil the request.
     path = f'/template/create'
     return request.post(base_url, headers, root+path, name, payload)
 
-def update_writeups(base_url, headers, writeupId, payload):
+def update_writeups(base_url, headers, writeupId, payload) -> PTWrapperLibraryResponse:
     """
     This request **updates** an existing writeup for a tenant.
 
@@ -109,7 +109,7 @@ Below is a list of information needed to fulfil the request.
     path = f'/template/{writeupId}'
     return request.put(base_url, headers, root+path, name, payload)
 
-def delete_writeups(base_url, headers, writeupId):
+def delete_writeups(base_url, headers, writeupId) -> PTWrapperLibraryResponse:
     """
     This request will **delete** a writeup from **WriteupsDB** by providing the instance url and writeup ID.
 
@@ -127,7 +127,7 @@ When successful, the following parameters will be returned:
     path = f'/template/{writeupId}'
     return request.delete(base_url, headers, root+path, name)
 
-def add_writeup_to_report(base_url, headers, writeupId, payload):
+def add_writeup_to_report(base_url, headers, writeupId, payload) -> PTWrapperLibraryResponse:
     """
     See v2 endpoint [Bulk Add Writeups to Report](https://api-docs.plextrac.com/#3806f48a-985b-4a63-b90f-9ca18e4a499b)
 

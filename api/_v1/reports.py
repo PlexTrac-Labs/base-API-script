@@ -1,62 +1,46 @@
 from utils import request_handler as request
 
-def list_client_reports(base_url, headers, clientId):
+def list_client_reports(base_url, headers, clientId) -> PTWrapperLibraryResponse:
     """
     This request **retrieves** a list of reports for a specific client. The information retrieved is limited and intended to provide an overview of the number of reports for a client.
 
 The `instanceUrl` and `clientId` is needed to execute the call.
 
-Below is returned on a successful call:
+A successful call returns a List of JSON objects with summarized information about each report.
+
+Below is the structure of the summarized JSON returned on a successful call:
 
 | **parameter** | **definition** | **example value** |
 | --- | --- | --- |
 | id | report ID and client ID combined | report_500004_client_4155 |
-| doc_id | client ID | 4155 |
-| data | information about the report, including report id, report name, and report status | 500004, Karbo Industries, draft |
+| doc_id | List with a single value of client ID | \[4155\] |
+| data | List of information about the report:  <br>report id  <br>report name  <br>null value  <br>report status  <br>number of findings  <br>List of operators  <br>List of reviewers  <br>epoch milliseconds of report creation date  <br> | \[500004, "Karbo Industries", null, "Draft", 1, \["test.operator@email.com"\], \["test.reviewer@email.com"\], 1680796600582\]  <br> |
     """
     name = "List Client Reports"
     root = "/api/v1"
     path = f'/client/{clientId}/reports'
     return request.get(base_url, headers, root+path, name)
 
-def get_report(base_url, headers, clientId, reportId, payload):
+def get_report(base_url, headers, clientId, reportId, payload) -> PTWrapperLibraryResponse:
     """
     This request **retrieves** a specific report for a client and provides robust information about the report.
 
 The `instanceUrl`, `reportId,` and `clientId` is needed to execute the call.
 
-Below is returned on a successful call:
-
-| **parameter** | **definition** | **example value** |
-| --- | --- | --- |
-| name | report name | Karbo Pentest Results May 2022 |
-| status | report status | draft |
-| includeEvidence |  | false |
-| report_id | report ID | 500004 |
-| doc_type | document type | report |
-| report_Type | report template type | default |
-| tags | any associated tags with the report | pentest, 2022 |
-| custom_field | any custom fields associated with the report seprated by a label and value | Custom Field  <br>sample value |
-| template | report template used | 754b-4289-8b5a-684391d5b988 |
-| start_date | date and time report started | 2022-05-17T19:00:11.146Z |
-| end_date | date and time report ended | 2022-05-18T19:00:13.168Z |
-| fields_template |  | 7c76e35c-1dfc-4623-8dc4-3a0bd33658a8 |
-| exec_summary | list of report narratives custom fields, IDs, labels and text |  |
+A successful call returns the JSON object of the report stored in the DB. See [Report Object](https://docs.plextrac.com/plextrac-documentation/master/plextrac-api/object-structures/report-object) for details on how this JSON is structured
     """
     name = "Get Report"
     root = "/api/v1"
     path = f'/client/{clientId}/report/{reportId}'
     return request.get(base_url, headers, root+path, name, payload)
 
-def create_report(base_url, headers, clientId, payload):
+def create_report(base_url, headers, clientId, payload) -> PTWrapperLibraryResponse:
     """
-    This request **creates** a report for a client. The request body should contain a JSON that represents the report to be created.
-
-This JSON has the properties of 'name' and 'status'.
-
-*name (string) - name of the report*
+    This request **creates** a report for a client.
 
 The `instanceUrl`and `clientId` is needed to execute.
+
+In addition to the example below, see [Report Object](https://docs.plextrac.com/plextrac-documentation/master/plextrac-api/object-structures/report-object) for details on the payload structure.
 
 Below is returned on a successful call:
 
@@ -71,11 +55,13 @@ Below is returned on a successful call:
     path = f'/client/{clientId}/report/create'
     return request.post(base_url, headers, root+path, name, payload)
 
-def update_report(base_url, headers, clientId, reportId, payload):
+def update_report(base_url, headers, clientId, reportId, payload) -> PTWrapperLibraryResponse:
     """
-    This request **updates** a report's `name`, `description`, `logistics`, `status`, `template`, `start_date`, `end_date`, and `fields template`.
+    This request **updates** a report. This does not update/relate to the findings on a report.
 
 The `instanceUrl`, `reportId,` and `clientId` is needed to execute the call.
+
+In addition to the example below, see [Report Object](https://docs.plextrac.com/plextrac-documentation/master/plextrac-api/object-structures/report-object) for details on the payload structure.
 
 Below is returned on a successful call:
 
@@ -83,21 +69,14 @@ Below is returned on a successful call:
 | --- | --- | --- |
 | status | status of change update | success |
 | message | change message | Report Updated Successfully |
-| data | contains all the data updated |  |
-| template | report template used | 754b-4289-8b5a-684391d5b988 |
-| start_date | date and time report started | 2022-05-17T19:00:11.146Z |
-| end_date | date and time report ended | 2022-05-18T19:00:13.168Z |
-| fields_template |  | 7c76e35c-1dfc-4623-8dc4-3a0bd33658a8 |
-| report_id | report ID | 500004 |
-| client_id | client ID | 4155 |
-| doc_type | document type | report |
+| data | the JSON of the updated report stored in the DB |  |
     """
     name = "Update Report"
     root = "/api/v1"
     path = f'/client/{clientId}/report/{reportId}'
     return request.put(base_url, headers, root+path, name, payload)
 
-def delete_report(base_url, headers, clientId, reportId):
+def delete_report(base_url, headers, clientId, reportId) -> PTWrapperLibraryResponse:
     """
     This request **removes** a report for a client.
 
@@ -115,7 +94,7 @@ Below is returned on a successful call:
     path = f'/client/{clientId}/report/{reportId}'
     return request.delete(base_url, headers, root+path, name)
 
-def get_exhibit(base_url, headers, clientId, reportId, exhibitId):
+def get_exhibit(base_url, headers, clientId, reportId, exhibitId) -> PTWrapperLibraryResponse:
     """
     This request **retrieves** an exhibit filename from a specific report.
 
@@ -132,7 +111,7 @@ Below is returned on a successful call:
     path = f'/client/{clientId}/report/{reportId}/{exhibitId}'
     return request.get(base_url, headers, root+path, name)
 
-def export_report_to_ptrac(base_url, headers, clientId, reportId):
+def export_report_to_ptrac(base_url, headers, clientId, reportId) -> PTWrapperLibraryResponse:
     """
     This request **exports a report** in ptrac format for further manipulation and future importing back into PlexTrac.
 
@@ -143,7 +122,7 @@ The `instanceUrl` ,`clientId,` and `reportId` is needed to execute.
     path = f'/client/{clientId}/report/{reportId}/export/ptrac'
     return request.get(base_url, headers, root+path, name)
 
-def import_ptrac_report(base_url, headers, clientId, payload):
+def import_ptrac_report(base_url, headers, clientId, payload) -> PTWrapperLibraryResponse:
     """
     No description in Postman
     """
@@ -152,7 +131,7 @@ def import_ptrac_report(base_url, headers, clientId, payload):
     path = f'/client/{clientId}/report/import'
     return request.post(base_url, headers, root+path, name, payload)
 
-def import_findings(base_url, headers, clientId, reportId, source):
+def import_findings(base_url, headers, clientId, reportId, source) -> PTWrapperLibraryResponse:
     """
     No description in Postman
     """

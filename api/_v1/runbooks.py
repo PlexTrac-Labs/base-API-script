@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def export_runbook(base_url, headers, runbookId):
+def export_runbook(base_url, headers, runbookId) -> PTWrapperLibraryResponse:
     """
     No description in Postman
     """
@@ -9,7 +9,7 @@ def export_runbook(base_url, headers, runbookId):
     path = f'/export/runbook/{runbookId}'
     return request.get(base_url, headers, root+path, name)
 
-def import_runbook(base_url, headers):
+def import_runbook(base_url, headers) -> PTWrapperLibraryResponse:
     """
     No description in Postman
     """

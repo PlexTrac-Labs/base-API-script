@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def list_all_writeup_repositories(base_url, headers, payload):
+def list_all_writeup_repositories(base_url, headers, payload) -> PTWrapperLibraryResponse:
     """
     This request **retrieves a list of repositories** in the **WriteupsD**B module.
 
@@ -11,7 +11,7 @@ Must send an empty JSON object with the request.
     path = f'/repositories/getAllWriteupsRepositories'
     return request.post(base_url, headers, root+path, name, payload)
 
-def get_writeups_repository_users_can_edit(base_url, headers):
+def get_writeups_repository_users_can_edit(base_url, headers) -> PTWrapperLibraryResponse:
     """
     If the user has the RBAC permission `ACCESS_WRITEUPS_REPOSITORIES`, this request **retrieves a list of repositories** in the **WriteupsD**B module that the user is assigned an EDITOR on.
     """
@@ -20,7 +20,7 @@ def get_writeups_repository_users_can_edit(base_url, headers):
     path = f'/repositories/listUserCanEdit'
     return request.get(base_url, headers, root+path, name)
 
-def get_writeup_repository(base_url, headers, repositoryId, payload):
+def get_writeup_repository(base_url, headers, repositoryId, payload) -> PTWrapperLibraryResponse:
     """
     This request **retrieves a specific repository and associated metadata** in the **WriteupsDB** module.
 
@@ -40,7 +40,7 @@ The `repositoryID` is found in the url when viewing the repository:
     path = f'/repositories/{repositoryId}'
     return request.post(base_url, headers, root+path, name, payload)
 
-def create_writeup_repository(base_url, headers, payload):
+def create_writeup_repository(base_url, headers, payload) -> PTWrapperLibraryResponse:
     """
     This request **adds a new repository** in the **WriteupsDB** module.
     """
@@ -49,7 +49,7 @@ def create_writeup_repository(base_url, headers, payload):
     path = f'/repositories/add'
     return request.post(base_url, headers, root+path, name, payload)
 
-def update_writeup_repository(base_url, headers, repositoryId, payload):
+def update_writeup_repository(base_url, headers, repositoryId, payload) -> PTWrapperLibraryResponse:
     """
     This request **updates a specific repository and associated metadata** in the **WriteupsDB** module.
 
@@ -69,7 +69,7 @@ The `repositoryID` is found in the url when viewing the repository:
     path = f'/repositories/{repositoryId}/update'
     return request.post(base_url, headers, root+path, name, payload)
 
-def delete_writeup_repository(base_url, headers, payload):
+def delete_writeup_repository(base_url, headers, payload) -> PTWrapperLibraryResponse:
     """
     This request **deletes a repository** in the **WriteupsDB** module.
     """

@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def get_mailer_templates(base_url, headers, tenantId):
+def get_mailer_templates(base_url, headers, tenantId) -> PTWrapperLibraryResponse:
     """
     Get Mailer Templates
     """
@@ -9,7 +9,7 @@ def get_mailer_templates(base_url, headers, tenantId):
     path = f'/tenants/{tenantId}/mailer/templates'
     return request.get(base_url, headers, root+path, name)
 
-def get_email_template(base_url, headers, tenantId):
+def get_email_template(base_url, headers, tenantId) -> PTWrapperLibraryResponse:
     """
     Get Email Template
     """
@@ -18,7 +18,7 @@ def get_email_template(base_url, headers, tenantId):
     path = f'/tenants/{tenantId}/mailer/templates/FORGOTTEN_PASSWORD'
     return request.get(base_url, headers, root+path, name)
 
-def upsert_email_template(base_url, headers, tenantId, payload):
+def upsert_email_template(base_url, headers, tenantId, payload) -> PTWrapperLibraryResponse:
     """
     Upsert Email Template
     """

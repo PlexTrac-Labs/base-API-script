@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def get_available_authentication_providers(base_url, headers):
+def get_available_authentication_providers(base_url, headers) -> PTWrapperLibraryResponse:
     """
     Return a list of supported authentication providers
     """
@@ -9,7 +9,7 @@ def get_available_authentication_providers(base_url, headers):
     path = f'/authenticate/providers'
     return request.get(base_url, headers, root+path, name)
 
-def get_tenant_provider_authentication_configuration(base_url, headers, tenantId, authProvider):
+def get_tenant_provider_authentication_configuration(base_url, headers, tenantId, authProvider) -> PTWrapperLibraryResponse:
     """
     Admin only route, update authentication provider configuration
     """
@@ -18,7 +18,7 @@ def get_tenant_provider_authentication_configuration(base_url, headers, tenantId
     path = f'/tenants/{tenantId}/providers/{authProvider}'
     return request.get(base_url, headers, root+path, name)
 
-def update_tenant_authentication_provider_configuration(base_url, headers, tenantId, authProvider, payload):
+def update_tenant_authentication_provider_configuration(base_url, headers, tenantId, authProvider, payload) -> PTWrapperLibraryResponse:
     """
     Update configuration for tenant authentication providers (Okta, Azure AD, Google) (Admin only)
     """
@@ -27,7 +27,7 @@ def update_tenant_authentication_provider_configuration(base_url, headers, tenan
     path = f'/tenants/{tenantId}/providers/{authProvider}'
     return request.post(base_url, headers, root+path, name, payload)
 
-def update_tenant_user_authentication_method(base_url, headers, tenantId, userId, payload):
+def update_tenant_user_authentication_method(base_url, headers, tenantId, userId, payload) -> PTWrapperLibraryResponse:
     """
     Update the authentication method a tenant user is authorized to log in with (admin only)
     """
@@ -36,7 +36,7 @@ def update_tenant_user_authentication_method(base_url, headers, tenantId, userId
     path = f'/authenticate/tenants/{tenantId}/users/{userId}/configuration'
     return request.put(base_url, headers, root+path, name, payload)
 
-def get_saml_provider(base_url, headers, tenantId, authProvider):
+def get_saml_provider(base_url, headers, tenantId, authProvider) -> PTWrapperLibraryResponse:
     """
     Endpoint for getting a single saml provider configuration, validate: {
         params: {
@@ -57,7 +57,7 @@ def get_saml_provider(base_url, headers, tenantId, authProvider):
     path = f'/tenants/{tenantId}/saml/{authProvider}'
     return request.get(base_url, headers, root+path, name)
 
-def upsert_saml_configuration(base_url, headers, tenantId, authProvider):
+def upsert_saml_configuration(base_url, headers, tenantId, authProvider) -> PTWrapperLibraryResponse:
     """
     Endpoint for updating and creating saml providers for a tenant.
 

@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def get_questionnaire(base_url, headers, questionnaireId, payload):
+def get_questionnaire(base_url, headers, questionnaireId, payload) -> PTWrapperLibraryResponse:
     """
     This request retrieves a specific questionnaire from the **Assessments** module.
     """
@@ -9,7 +9,7 @@ def get_questionnaire(base_url, headers, questionnaireId, payload):
     path = f'/assessments/questionnaires/{questionnaireId}'
     return request.get(base_url, headers, root+path, name, payload)
 
-def create_questionnaire(base_url, headers, payload):
+def create_questionnaire(base_url, headers, payload) -> PTWrapperLibraryResponse:
     """
     This request **creates** a questionnaire to be stored in the **Assessments** module.
     """
@@ -18,7 +18,7 @@ def create_questionnaire(base_url, headers, payload):
     path = f'/assessments/questionnaires'
     return request.post(base_url, headers, root+path, name, payload)
 
-def update_questionnaire(base_url, headers, questionnaireId, payload):
+def update_questionnaire(base_url, headers, questionnaireId, payload) -> PTWrapperLibraryResponse:
     """
     This request **updates** information for a specific questionnaire in the **Assessments** module.
     """
@@ -27,7 +27,7 @@ def update_questionnaire(base_url, headers, questionnaireId, payload):
     path = f'/assessments/questionnaires/{questionnaireId}'
     return request.put(base_url, headers, root+path, name, payload)
 
-def export_questionnaire(base_url, headers, questionnaireId, payload):
+def export_questionnaire(base_url, headers, questionnaireId, payload) -> PTWrapperLibraryResponse:
     """
     This request **exports** a specific questionnaire from the **Assessments** module.
     """
@@ -36,7 +36,7 @@ def export_questionnaire(base_url, headers, questionnaireId, payload):
     path = f'/assessments/questionnaires/{questionnaireId}/export'
     return request.get(base_url, headers, root+path, name, payload)
 
-def import_questionnaire(base_url, headers, payload):
+def import_questionnaire(base_url, headers, payload) -> PTWrapperLibraryResponse:
     """
     This request imports a questionnaire to the **Assessments** module.
     """

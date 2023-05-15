@@ -1,5 +1,4 @@
 from api._v2 import _authentication
-from api._v2 import _admin
 from api._v2 import _analytics
 from api._v2 import _assessments
 from api._v2 import assets
@@ -11,3 +10,5 @@ from api._v2 import reports
 from api._v2 import _tenant
 from api._v2 import tenant
 from api._v2 import users
+from api._v2 import _integrations
+from api._v2 import integrations

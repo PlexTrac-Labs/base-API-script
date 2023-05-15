@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def get_assets_by_client(base_url, headers, clientId, payload):
+def get_assets_by_client(base_url, headers, clientId, payload) -> PTWrapperLibraryResponse:
     """
     This request **retrieves the list of assets for a specific client**.
 
@@ -29,7 +29,7 @@ The following values can be used in the `sort.order` field:
     path = f'/clients/{clientId}/assets'
     return request.post(base_url, headers, root+path, name, payload)
 
-def import_client_assets(base_url, headers, clientId, source, payload):
+def import_client_assets(base_url, headers, clientId, source, payload) -> PTWrapperLibraryResponse:
     """
     This request imports assets from an outside tool into PlexTrac for a specific client.
 
@@ -50,7 +50,7 @@ When importing a csv file, the endpoint response contains the field `result`, wh
     path = f'/client/{clientId}/assets/import/{source}'
     return request.post(base_url, headers, root+path, name, payload)
 
-def list_report_assets(base_url, headers, reportId):
+def list_report_assets(base_url, headers, reportId) -> PTWrapperLibraryResponse:
     """
     This request **retrieves a list of assets for a specific report.**
     """
@@ -59,13 +59,13 @@ def list_report_assets(base_url, headers, reportId):
     path = f'/reports/{reportId}/assets'
     return request.get(base_url, headers, root+path, name)
 
-def get_tenant_assets(base_url, headers, payload):
+def get_tenant_assets(base_url, headers, payload) -> PTWrapperLibraryResponse:
     """
     This request **retrieves the list of assets for a tenant**.
 
 `pagination` is a required key while `sort` and `filters` are optional.
 
-The `pagination.limit` must be one of \[5, 10, 25, 50, 100\]. The `pagination.offset` is the number of records to shift by, not the number of pages to shift by. i.e. offset 2, limit 10 gives you records 2-12 not 20-30
+The `pagination.limit` must be one of \[5, 10, 25, 50, 100, 1000\]. The `pagination.offset` is the number of records to shift by, not the number of pages to shift by. i.e. offset 2, limit 10 gives you records 2-12 not 20-30
 
 The following values can be used in the `sort.by` and `filters.by` field:
 

@@ -1,8 +1,8 @@
 from utils import request_handler as request
 
-def get_findings_filtration(base_url, headers, clients, reports, date_from, date_to):
+def get_findings_filtration(base_url, headers, clients, reports, date_from, date_to) -> PTWrapperLibraryResponse:
     """
-    This request **retrieves a specific report** from a client with date filters.
+    This request **retrieves frindings** from a client and report with date filters.
 
     Query Parameters:
     clients: Array of client IDs - example ({{clientId}})
@@ -15,7 +15,7 @@ def get_findings_filtration(base_url, headers, clients, reports, date_from, date
     path = f'/clients/findings?clients={clients}?reports={reports}?date_from={date_from}?date_to={date_to}'
     return request.get(base_url, headers, root+path, name)
 
-def list_report_findings(base_url, headers, clientId, reportId):
+def list_report_findings(base_url, headers, clientId, reportId) -> PTWrapperLibraryResponse:
     """
     This request **retrieves a list of findings for a specific report**.
     """
@@ -24,7 +24,7 @@ def list_report_findings(base_url, headers, clientId, reportId):
     path = f'/client/{clientId}/report/{reportId}/flaws'
     return request.get(base_url, headers, root+path, name)
 
-def get_finding(base_url, headers, clientId, reportId, findingId):
+def get_finding(base_url, headers, clientId, reportId, findingId) -> PTWrapperLibraryResponse:
     """
     This request **retrieves a specific finding** from a report.
     """
@@ -33,16 +33,20 @@ def get_finding(base_url, headers, clientId, reportId, findingId):
     path = f'/client/{clientId}/report/{reportId}/flaw/{findingId}'
     return request.get(base_url, headers, root+path, name)
 
-def create_finding(base_url, headers, clientId, reportId, payload):
+def create_finding(base_url, headers, clientId, reportId, payload) -> PTWrapperLibraryResponse:
     """
     This request **creates a finding** for a specific report.
+
+When a finding is created in the UI there are a few processes that get kicked off that do not happen when calling this endpoint directly. Including:
+
+**Registering Tags** - Any tags added to the finding that have not been added anywhere else in the instnace will be added to the finding but NOT to the list of tenant tags. This means when you start typing to add a tag anywhere in the platform, the dropdown list that pops up will not have the new tags since they weren't added to the listed of tenant tags.
     """
     name = "Create Finding"
     root = "/api/v1"
     path = f'/client/{clientId}/report/{reportId}/flaw/create'
     return request.post(base_url, headers, root+path, name, payload)
 
-def update_finding(base_url, headers, clientId, reportId, findingId, payload):
+def update_finding(base_url, headers, clientId, reportId, findingId, payload) -> PTWrapperLibraryResponse:
     """
     This request **updates a specific finding** for a specific report.
     """
@@ -51,7 +55,7 @@ def update_finding(base_url, headers, clientId, reportId, findingId, payload):
     path = f'/client/{clientId}/report/{reportId}/flaw/{findingId}'
     return request.put(base_url, headers, root+path, name, payload)
 
-def delete_finding(base_url, headers, clientId, reportId, findingId):
+def delete_finding(base_url, headers, clientId, reportId, findingId) -> PTWrapperLibraryResponse:
     """
     This request **deletes a specific finding** from a specific report.
     """
@@ -60,7 +64,7 @@ def delete_finding(base_url, headers, clientId, reportId, findingId):
     path = f'/client/{clientId}/report/{reportId}/flaw/{findingId}'
     return request.delete(base_url, headers, root+path, name)
 
-def get_finding_status_list(base_url, headers, clientId, reportId, findingId):
+def get_finding_status_list(base_url, headers, clientId, reportId, findingId) -> PTWrapperLibraryResponse:
     """
     This request **retrieves the status of a specific finding** from a report.
     """
@@ -69,7 +73,7 @@ def get_finding_status_list(base_url, headers, clientId, reportId, findingId):
     path = f'/client/{clientId}/report/{reportId}/flaw/{findingId}/status'
     return request.get(base_url, headers, root+path, name)
 
-def create_status_update(base_url, headers, clientId, reportId, findingId, payload):
+def create_status_update(base_url, headers, clientId, reportId, findingId, payload) -> PTWrapperLibraryResponse:
     """
     This request **updates the status of a specific finding** from a report.
 
@@ -80,7 +84,7 @@ Note: The request should include the entire `findings` object, which is document
     path = f'/client/{clientId}/report/{reportId}/flaw/{findingId}/status/update'
     return request.post(base_url, headers, root+path, name, payload)
 
-def bulk_delete_findings(base_url, headers, clientId, reportId, payload):
+def bulk_delete_findings(base_url, headers, clientId, reportId, payload) -> PTWrapperLibraryResponse:
     """
     This request **enables a bulk deletion of findings** from a report.
     """

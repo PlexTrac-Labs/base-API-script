@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def get_integration(base_url, headers, tenantId, product):
+def get_integration(base_url, headers, tenantId, product) -> PTWrapperLibraryResponse:
     """
     No description in Postman
     """
@@ -9,7 +9,7 @@ def get_integration(base_url, headers, tenantId, product):
     path = f'/tenant/{tenantId}/integrations/{product}'
     return request.get(base_url, headers, root+path, name)
 
-def save_integration(base_url, headers, tenantId, product, payload):
+def save_integration(base_url, headers, tenantId, product, payload) -> PTWrapperLibraryResponse:
     """
     No description in Postman
     """
@@ -18,7 +18,7 @@ def save_integration(base_url, headers, tenantId, product, payload):
     path = f'/tenant/{tenantId}/integrations/{product}'
     return request.post(base_url, headers, root+path, name, payload)
 
-def delete_integration(base_url, headers, tenantId, product):
+def delete_integration(base_url, headers, tenantId, product) -> PTWrapperLibraryResponse:
     """
     No description in Postman
     """
@@ -27,7 +27,7 @@ def delete_integration(base_url, headers, tenantId, product):
     path = f'/tenant/{tenantId}/integrations/{product}'
     return request.delete(base_url, headers, root+path, name)
 
-def tenableio_get_tags(base_url, headers):
+def tenableio_get_tags(base_url, headers) -> PTWrapperLibraryResponse:
     """
     No description in Postman
     """
@@ -36,7 +36,7 @@ def tenableio_get_tags(base_url, headers):
     path = f'/integrations/tenable-io/tags'
     return request.get(base_url, headers, root+path, name)
 
-def tenableio_sync_tags(base_url, headers):
+def tenableio_sync_tags(base_url, headers) -> PTWrapperLibraryResponse:
     """
     No description in Postman
     """

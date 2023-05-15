@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def search__replace_in_report_occurrences(base_url, headers, payload):
+def search__replace_in_report_occurrences(base_url, headers, payload) -> PTWrapperLibraryResponse:
     """
     This request **retrieves a count** of the number of occurrences that exist in a report for a given query. This will not result in any changes of data but only return a numerical value.
 
@@ -18,7 +18,7 @@ Below is returned on a successful call:
     path = f'/search-replace/occurrences'
     return request.post(base_url, headers, root+path, name, payload)
 
-def search__replace_in_report_replace(base_url, headers, payload):
+def search__replace_in_report_replace(base_url, headers, payload) -> PTWrapperLibraryResponse:
     """
     This request **finds and replaces** a value in a report, such a report title, finding title, or field key.
 

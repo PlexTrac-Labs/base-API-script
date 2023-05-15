@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def list_jira_projects(base_url, headers):
+def list_jira_projects(base_url, headers) -> PTWrapperLibraryResponse:
     """
     This request **retrieves a list of Jira projects** that are used to associate a finding ticket to**.**
     """
@@ -9,7 +9,7 @@ def list_jira_projects(base_url, headers):
     path = f'/jira/projects'
     return request.get(base_url, headers, root+path, name)
 
-def create_and_link_jira_ticket_to_finding(base_url, headers, clientId, reportId, findingId, payload):
+def create_and_link_jira_ticket_to_finding(base_url, headers, clientId, reportId, findingId, payload) -> PTWrapperLibraryResponse:
     """
     This request **creates a finding for a specific report and creates a Jira ticket**, if that integration is configured.
     """
