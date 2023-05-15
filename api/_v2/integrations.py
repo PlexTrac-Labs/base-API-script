@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def get_configurations(base_url, headers) -> PTWrapperLibraryResponse:
+def get_configurations(base_url, headers):
     """
     No description in Postman
     """
@@ -9,7 +9,7 @@ def get_configurations(base_url, headers) -> PTWrapperLibraryResponse:
     path = f'/integrations/configurations'
     return request.get(base_url, headers, root+path, name)
 
-def create_configurations(base_url, headers, payload) -> PTWrapperLibraryResponse:
+def create_configurations(base_url, headers, payload):
     """
     Creates a config for an integration.
 
@@ -28,7 +28,7 @@ def create_configurations(base_url, headers, payload) -> PTWrapperLibraryRespons
     path = f'/integrations/configurations'
     return request.post(base_url, headers, root+path, name, payload)
 
-def get_configuration(base_url, headers, configId) -> PTWrapperLibraryResponse:
+def get_configuration(base_url, headers, configId):
     """
     Creates a config for an integration.
 
@@ -47,7 +47,7 @@ def get_configuration(base_url, headers, configId) -> PTWrapperLibraryResponse:
     path = f'/integrations/configurations/{configId}'
     return request.get(base_url, headers, root+path, name)
 
-def update_configuration(base_url, headers, configId, payload) -> PTWrapperLibraryResponse:
+def update_configuration(base_url, headers, configId, payload):
     """
     Creates a config for an integration.
 
@@ -66,7 +66,7 @@ def update_configuration(base_url, headers, configId, payload) -> PTWrapperLibra
     path = f'/integrations/configurations/{configId}'
     return request.put(base_url, headers, root+path, name, payload)
 
-def delete_configuration(base_url, headers, configId) -> PTWrapperLibraryResponse:
+def delete_configuration(base_url, headers, configId):
     """
     Creates a config for an integration.
 

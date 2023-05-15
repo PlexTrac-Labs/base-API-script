@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def get_assets_by_client(base_url, headers, clientId, payload) -> PTWrapperLibraryResponse:
+def get_assets_by_client(base_url, headers, clientId, payload):
     """
     This request **retrieves the list of assets for a specific client**.
 
@@ -29,7 +29,7 @@ The following values can be used in the `sort.order` field:
     path = f'/clients/{clientId}/assets'
     return request.post(base_url, headers, root+path, name, payload)
 
-def import_client_assets(base_url, headers, clientId, source, payload) -> PTWrapperLibraryResponse:
+def import_client_assets(base_url, headers, clientId, source, payload):
     """
     This request imports assets from an outside tool into PlexTrac for a specific client.
 
@@ -50,7 +50,7 @@ When importing a csv file, the endpoint response contains the field `result`, wh
     path = f'/client/{clientId}/assets/import/{source}'
     return request.post(base_url, headers, root+path, name, payload)
 
-def list_report_assets(base_url, headers, reportId) -> PTWrapperLibraryResponse:
+def list_report_assets(base_url, headers, reportId):
     """
     This request **retrieves a list of assets for a specific report.**
     """
@@ -59,7 +59,7 @@ def list_report_assets(base_url, headers, reportId) -> PTWrapperLibraryResponse:
     path = f'/reports/{reportId}/assets'
     return request.get(base_url, headers, root+path, name)
 
-def get_tenant_assets(base_url, headers, payload) -> PTWrapperLibraryResponse:
+def get_tenant_assets(base_url, headers, payload):
     """
     This request **retrieves the list of assets for a tenant**.
 

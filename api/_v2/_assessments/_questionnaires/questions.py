@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def list_questions(base_url, headers, questionnaireId, limit, offset, search) -> PTWrapperLibraryResponse:
+def list_questions(base_url, headers, questionnaireId, limit, offset, search):
     """
     This request **retrieves** all questions that exist for a specific questionnaire.
 
@@ -14,7 +14,7 @@ def list_questions(base_url, headers, questionnaireId, limit, offset, search) ->
     path = f'/assessments/questionnaires/{questionnaireId}/questions?limit={limit}?offset={offset}?search={search}'
     return request.get(base_url, headers, root+path, name)
 
-def get_question(base_url, headers, questionnaireId, questionId) -> PTWrapperLibraryResponse:
+def get_question(base_url, headers, questionnaireId, questionId):
     """
     This request **retrieves** **a specific** question from a specific questionnaire.
     """
@@ -23,7 +23,7 @@ def get_question(base_url, headers, questionnaireId, questionId) -> PTWrapperLib
     path = f'/assessments/questionnaires/{questionnaireId}/questions/{questionId}'
     return request.get(base_url, headers, root+path, name)
 
-def create_question(base_url, headers, questionnaireId, payload) -> PTWrapperLibraryResponse:
+def create_question(base_url, headers, questionnaireId, payload):
     """
     This request **creates a question** for a specific questionnaire.
     """
@@ -32,7 +32,7 @@ def create_question(base_url, headers, questionnaireId, payload) -> PTWrapperLib
     path = f'/assessments/questionnaires/{questionnaireId}/questions'
     return request.post(base_url, headers, root+path, name, payload)
 
-def update_question(base_url, headers, questionnaireId, questionId, payload) -> PTWrapperLibraryResponse:
+def update_question(base_url, headers, questionnaireId, questionId, payload):
     """
     This request **updates** a questions that exists for a specific questionnaire.
 
@@ -71,7 +71,7 @@ def update_question(base_url, headers, questionnaireId, questionId, payload) -> 
     path = f'/assessments/questionnaires/{questionnaireId}/questions/{questionId}'
     return request.put(base_url, headers, root+path, name, payload)
 
-def change_question_order(base_url, headers, questionnaireId, questionId, payload) -> PTWrapperLibraryResponse:
+def change_question_order(base_url, headers, questionnaireId, questionId, payload):
     """
     This request **changes the order** of a specific question for a specific questionnaire.
     """
@@ -80,7 +80,7 @@ def change_question_order(base_url, headers, questionnaireId, questionId, payloa
     path = f'/assessments/questionnaires/{questionnaireId}/questions/{questionId}/order'
     return request.put(base_url, headers, root+path, name, payload)
 
-def delete_question(base_url, headers, questionnaireId, questionId) -> PTWrapperLibraryResponse:
+def delete_question(base_url, headers, questionnaireId, questionId):
     """
     This request **deletes** a specific question for a specific questionnaire.
     """

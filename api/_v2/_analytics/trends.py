@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def analytics___trends___opened_closed(base_url, headers, payload) -> PTWrapperLibraryResponse:
+def analytics___trends___opened_closed(base_url, headers, payload):
     """
     POST:
 - clients: int[]
@@ -13,7 +13,7 @@ def analytics___trends___opened_closed(base_url, headers, payload) -> PTWrapperL
     path = f'/clients/analytics/trends/opened-closed'
     return request.post(base_url, headers, root+path, name, payload)
 
-def analytics___trends___from_creation_to_close(base_url, headers, payload) -> PTWrapperLibraryResponse:
+def analytics___trends___from_creation_to_close(base_url, headers, payload):
     """
     POST:
 - clients: int[]
@@ -26,7 +26,7 @@ def analytics___trends___from_creation_to_close(base_url, headers, payload) -> P
     path = f'/clients/analytics/trends/from-creation-to-close'
     return request.post(base_url, headers, root+path, name, payload)
 
-def analytics___trends___age_of_open_findings(base_url, headers, payload) -> PTWrapperLibraryResponse:
+def analytics___trends___age_of_open_findings(base_url, headers, payload):
     """
     POST:
 - clients: int[]
@@ -39,7 +39,7 @@ def analytics___trends___age_of_open_findings(base_url, headers, payload) -> PTW
     path = f'/clients/analytics/trends/age-of-open-findings'
     return request.post(base_url, headers, root+path, name, payload)
 
-def analytics___trends___slas(base_url, headers, payload) -> PTWrapperLibraryResponse:
+def analytics___trends___slas(base_url, headers, payload):
     """
     No description in Postman
     """
@@ -48,7 +48,7 @@ def analytics___trends___slas(base_url, headers, payload) -> PTWrapperLibraryRes
     path = f'/sla/analytics/mean-time'
     return request.post(base_url, headers, root+path, name, payload)
 
-def analytics___trends___sla_findings(base_url, headers, payload) -> PTWrapperLibraryResponse:
+def analytics___trends___sla_findings(base_url, headers, payload):
     """
     No description in Postman
     """

@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def get_upload_by_name(base_url, headers) -> PTWrapperLibraryResponse:
+def get_upload_by_name(base_url, headers):
     """
     No description in Postman
     """
@@ -9,7 +9,7 @@ def get_upload_by_name(base_url, headers) -> PTWrapperLibraryResponse:
     path = f'/uploads/2d18530e-fa9c-4a4a-a494-b3e3bdb42007.jpg'
     return request.get(base_url, headers, root+path, name)
 
-def upload_image_to_tenant(base_url, headers, payload) -> PTWrapperLibraryResponse:
+def upload_image_to_tenant(base_url, headers, payload):
     """
     No description in Postman
     """

@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def list_tenant_tags(base_url, headers, tenantId, limit, offset) -> PTWrapperLibraryResponse:
+def list_tenant_tags(base_url, headers, tenantId, limit, offset):
     """
     This request retrieves **a list of all tags for a tenant** with filter options.
 
@@ -13,7 +13,7 @@ def list_tenant_tags(base_url, headers, tenantId, limit, offset) -> PTWrapperLib
     path = f'/tenant/{tenantId}/tag?limit={limit}?offset={offset}'
     return request.get(base_url, headers, root+path, name)
 
-def create_tenant_tag(base_url, headers, tenantId, payload) -> PTWrapperLibraryResponse:
+def create_tenant_tag(base_url, headers, tenantId, payload):
     """
     This request creates **a new tag for a tenant.** A created tag will be listed on the tag dropdown that appears when typing to add a tag anywhere in the platform. This functionality is found in the platform under Account Admin > Tag Settings > Create Tag
 
@@ -28,7 +28,7 @@ This endpoint returns an empty array `[]` when successful
     path = f'/tenant/{tenantId}/tag'
     return request.post(base_url, headers, root+path, name, payload)
 
-def delete_tenant_tag(base_url, headers, tenantId, tagId) -> PTWrapperLibraryResponse:
+def delete_tenant_tag(base_url, headers, tenantId, tagId):
     """
     This request creates **a new tag for a tenant.** This functionality is found in the platform under Account Admin > Tag Settings > Actions > Delete
 

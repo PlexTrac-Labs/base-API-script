@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def get_findings_by_report(base_url, headers, clientId, reportId, payload) -> PTWrapperLibraryResponse:
+def get_findings_by_report(base_url, headers, clientId, reportId, payload):
     """
     This request **retrieves a list of findings for a specific report.**
     """
@@ -9,7 +9,7 @@ def get_findings_by_report(base_url, headers, clientId, reportId, payload) -> PT
     path = f'/clients/{clientId}/reports/{reportId}/findings'
     return request.post(base_url, headers, root+path, name, payload)
 
-def get_affected_assets_by_finding(base_url, headers, clientId, reportId, findingId, offset, limit, order, filter, status) -> PTWrapperLibraryResponse:
+def get_affected_assets_by_finding(base_url, headers, clientId, reportId, findingId, offset, limit, order, filter, status):
     """
     This request **retrieves a paginated list of assets** for a specific finding in a specific report.
 
@@ -25,7 +25,7 @@ def get_affected_assets_by_finding(base_url, headers, clientId, reportId, findin
     path = f'/clients/{clientId}/reports/{reportId}/flaws/{findingId}/affected_assets?offset={offset}?limit={limit}?order={order}?filter={filter}?status={status}'
     return request.get(base_url, headers, root+path, name)
 
-def bulk_update_findings(base_url, headers, clientId, reportId, payload) -> PTWrapperLibraryResponse:
+def bulk_update_findings(base_url, headers, clientId, reportId, payload):
     """
     get a paginated list of affected assets by finding id
     """
@@ -34,7 +34,7 @@ def bulk_update_findings(base_url, headers, clientId, reportId, payload) -> PTWr
     path = f'/clients/{clientId}/reports/{reportId}/findings'
     return request.put(base_url, headers, root+path, name, payload)
 
-def bulk_get_evidence(base_url, headers, tenantId, clientId, reportId, findingId, payload) -> PTWrapperLibraryResponse:
+def bulk_get_evidence(base_url, headers, tenantId, clientId, reportId, findingId, payload):
     """
     This request **retrieves evidence information** for a specific finding for a specific report.
     """
@@ -43,7 +43,7 @@ def bulk_get_evidence(base_url, headers, tenantId, clientId, reportId, findingId
     path = f'/tenant/{tenantId}/client/{clientId}/report/{reportId}/finding/{findingId}/asset/evidence'
     return request.post(base_url, headers, root+path, name, payload)
 
-def update_evidence(base_url, headers, clientId, reportId, findingId, assetId, evidenceId, payload) -> PTWrapperLibraryResponse:
+def update_evidence(base_url, headers, clientId, reportId, findingId, assetId, evidenceId, payload):
     """
     This request **updates evidence for a specific asset and finding**.
     """
@@ -52,7 +52,7 @@ def update_evidence(base_url, headers, clientId, reportId, findingId, assetId, e
     path = f'/client/{clientId}/report/{reportId}/finding/{findingId}/asset/{assetId}/evidence/{evidenceId}'
     return request.put(base_url, headers, root+path, name, payload)
 
-def bulk_upsert_evidence(base_url, headers, tenantId, clientId, reportId, findingId, payload) -> PTWrapperLibraryResponse:
+def bulk_upsert_evidence(base_url, headers, tenantId, clientId, reportId, findingId, payload):
     """
     This request **inserts evidence information in bulk** and creates new evidence without adding it to an affected asset.
 
@@ -63,7 +63,7 @@ The `id` should be an existing or new UUID
     path = f'/tenant/{tenantId}/client/{clientId}/report/{reportId}/finding/{findingId}/asset/evidence'
     return request.put(base_url, headers, root+path, name, payload)
 
-def copy_finding_to_writeups_repository(base_url, headers, payload) -> PTWrapperLibraryResponse:
+def copy_finding_to_writeups_repository(base_url, headers, payload):
     """
     This request **copies a finding from a report** and puts into a **WriteUpsDB** repository.
     """

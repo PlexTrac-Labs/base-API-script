@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def get_findings_filtration(base_url, headers, clients, reports, date_from, date_to) -> PTWrapperLibraryResponse:
+def get_findings_filtration(base_url, headers, clients, reports, date_from, date_to):
     """
     This request **retrieves frindings** from a client and report with date filters.
 
@@ -15,7 +15,7 @@ def get_findings_filtration(base_url, headers, clients, reports, date_from, date
     path = f'/clients/findings?clients={clients}?reports={reports}?date_from={date_from}?date_to={date_to}'
     return request.get(base_url, headers, root+path, name)
 
-def list_report_findings(base_url, headers, clientId, reportId) -> PTWrapperLibraryResponse:
+def list_report_findings(base_url, headers, clientId, reportId):
     """
     This request **retrieves a list of findings for a specific report**.
     """
@@ -24,7 +24,7 @@ def list_report_findings(base_url, headers, clientId, reportId) -> PTWrapperLibr
     path = f'/client/{clientId}/report/{reportId}/flaws'
     return request.get(base_url, headers, root+path, name)
 
-def get_finding(base_url, headers, clientId, reportId, findingId) -> PTWrapperLibraryResponse:
+def get_finding(base_url, headers, clientId, reportId, findingId):
     """
     This request **retrieves a specific finding** from a report.
     """
@@ -33,7 +33,7 @@ def get_finding(base_url, headers, clientId, reportId, findingId) -> PTWrapperLi
     path = f'/client/{clientId}/report/{reportId}/flaw/{findingId}'
     return request.get(base_url, headers, root+path, name)
 
-def create_finding(base_url, headers, clientId, reportId, payload) -> PTWrapperLibraryResponse:
+def create_finding(base_url, headers, clientId, reportId, payload):
     """
     This request **creates a finding** for a specific report.
 
@@ -46,7 +46,7 @@ When a finding is created in the UI there are a few processes that get kicked of
     path = f'/client/{clientId}/report/{reportId}/flaw/create'
     return request.post(base_url, headers, root+path, name, payload)
 
-def update_finding(base_url, headers, clientId, reportId, findingId, payload) -> PTWrapperLibraryResponse:
+def update_finding(base_url, headers, clientId, reportId, findingId, payload):
     """
     This request **updates a specific finding** for a specific report.
     """
@@ -55,7 +55,7 @@ def update_finding(base_url, headers, clientId, reportId, findingId, payload) ->
     path = f'/client/{clientId}/report/{reportId}/flaw/{findingId}'
     return request.put(base_url, headers, root+path, name, payload)
 
-def delete_finding(base_url, headers, clientId, reportId, findingId) -> PTWrapperLibraryResponse:
+def delete_finding(base_url, headers, clientId, reportId, findingId):
     """
     This request **deletes a specific finding** from a specific report.
     """
@@ -64,7 +64,7 @@ def delete_finding(base_url, headers, clientId, reportId, findingId) -> PTWrappe
     path = f'/client/{clientId}/report/{reportId}/flaw/{findingId}'
     return request.delete(base_url, headers, root+path, name)
 
-def get_finding_status_list(base_url, headers, clientId, reportId, findingId) -> PTWrapperLibraryResponse:
+def get_finding_status_list(base_url, headers, clientId, reportId, findingId):
     """
     This request **retrieves the status of a specific finding** from a report.
     """
@@ -73,7 +73,7 @@ def get_finding_status_list(base_url, headers, clientId, reportId, findingId) ->
     path = f'/client/{clientId}/report/{reportId}/flaw/{findingId}/status'
     return request.get(base_url, headers, root+path, name)
 
-def create_status_update(base_url, headers, clientId, reportId, findingId, payload) -> PTWrapperLibraryResponse:
+def create_status_update(base_url, headers, clientId, reportId, findingId, payload):
     """
     This request **updates the status of a specific finding** from a report.
 
@@ -84,7 +84,7 @@ Note: The request should include the entire `findings` object, which is document
     path = f'/client/{clientId}/report/{reportId}/flaw/{findingId}/status/update'
     return request.post(base_url, headers, root+path, name, payload)
 
-def bulk_delete_findings(base_url, headers, clientId, reportId, payload) -> PTWrapperLibraryResponse:
+def bulk_delete_findings(base_url, headers, clientId, reportId, payload):
     """
     This request **enables a bulk deletion of findings** from a report.
     """

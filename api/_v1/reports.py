@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def list_client_reports(base_url, headers, clientId) -> PTWrapperLibraryResponse:
+def list_client_reports(base_url, headers, clientId):
     """
     This request **retrieves** a list of reports for a specific client. The information retrieved is limited and intended to provide an overview of the number of reports for a client.
 
@@ -21,7 +21,7 @@ Below is the structure of the summarized JSON returned on a successful call:
     path = f'/client/{clientId}/reports'
     return request.get(base_url, headers, root+path, name)
 
-def get_report(base_url, headers, clientId, reportId, payload) -> PTWrapperLibraryResponse:
+def get_report(base_url, headers, clientId, reportId, payload):
     """
     This request **retrieves** a specific report for a client and provides robust information about the report.
 
@@ -34,7 +34,7 @@ A successful call returns the JSON object of the report stored in the DB. See [R
     path = f'/client/{clientId}/report/{reportId}'
     return request.get(base_url, headers, root+path, name, payload)
 
-def create_report(base_url, headers, clientId, payload) -> PTWrapperLibraryResponse:
+def create_report(base_url, headers, clientId, payload):
     """
     This request **creates** a report for a client.
 
@@ -55,7 +55,7 @@ Below is returned on a successful call:
     path = f'/client/{clientId}/report/create'
     return request.post(base_url, headers, root+path, name, payload)
 
-def update_report(base_url, headers, clientId, reportId, payload) -> PTWrapperLibraryResponse:
+def update_report(base_url, headers, clientId, reportId, payload):
     """
     This request **updates** a report. This does not update/relate to the findings on a report.
 
@@ -76,7 +76,7 @@ Below is returned on a successful call:
     path = f'/client/{clientId}/report/{reportId}'
     return request.put(base_url, headers, root+path, name, payload)
 
-def delete_report(base_url, headers, clientId, reportId) -> PTWrapperLibraryResponse:
+def delete_report(base_url, headers, clientId, reportId):
     """
     This request **removes** a report for a client.
 
@@ -94,7 +94,7 @@ Below is returned on a successful call:
     path = f'/client/{clientId}/report/{reportId}'
     return request.delete(base_url, headers, root+path, name)
 
-def get_exhibit(base_url, headers, clientId, reportId, exhibitId) -> PTWrapperLibraryResponse:
+def get_exhibit(base_url, headers, clientId, reportId, exhibitId):
     """
     This request **retrieves** an exhibit filename from a specific report.
 
@@ -111,7 +111,7 @@ Below is returned on a successful call:
     path = f'/client/{clientId}/report/{reportId}/{exhibitId}'
     return request.get(base_url, headers, root+path, name)
 
-def export_report_to_ptrac(base_url, headers, clientId, reportId) -> PTWrapperLibraryResponse:
+def export_report_to_ptrac(base_url, headers, clientId, reportId):
     """
     This request **exports a report** in ptrac format for further manipulation and future importing back into PlexTrac.
 
@@ -122,7 +122,7 @@ The `instanceUrl` ,`clientId,` and `reportId` is needed to execute.
     path = f'/client/{clientId}/report/{reportId}/export/ptrac'
     return request.get(base_url, headers, root+path, name)
 
-def import_ptrac_report(base_url, headers, clientId, payload) -> PTWrapperLibraryResponse:
+def import_ptrac_report(base_url, headers, clientId, payload):
     """
     No description in Postman
     """
@@ -131,7 +131,7 @@ def import_ptrac_report(base_url, headers, clientId, payload) -> PTWrapperLibrar
     path = f'/client/{clientId}/report/import'
     return request.post(base_url, headers, root+path, name, payload)
 
-def import_findings(base_url, headers, clientId, reportId, source) -> PTWrapperLibraryResponse:
+def import_findings(base_url, headers, clientId, reportId, source):
     """
     No description in Postman
     """

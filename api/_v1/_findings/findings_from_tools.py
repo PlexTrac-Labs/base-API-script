@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def add_findings_from_file_imports(base_url, headers, clientId, reportId, source, payload) -> PTWrapperLibraryResponse:
+def add_findings_from_file_imports(base_url, headers, clientId, reportId, source, payload):
     """
     source must be from the following list:
 
@@ -32,7 +32,7 @@ nodeware
     path = f'/client/{clientId}/report/{reportId}/import/{source}'
     return request.post(base_url, headers, root+path, name, payload)
 
-def import_acunetix(base_url, headers, clientId, reportId, payload) -> PTWrapperLibraryResponse:
+def import_acunetix(base_url, headers, clientId, reportId, payload):
     """
     This request **imports findings** from the tool Acunetix.
     """
@@ -41,7 +41,7 @@ def import_acunetix(base_url, headers, clientId, reportId, payload) -> PTWrapper
     path = f'/client/{clientId}/report/{reportId}/import/acunetix'
     return request.post(base_url, headers, root+path, name, payload)
 
-def import_burp(base_url, headers, clientId, reportId, payload) -> PTWrapperLibraryResponse:
+def import_burp(base_url, headers, clientId, reportId, payload):
     """
     This request **imports findings** from the tool Burp.
     """
@@ -50,7 +50,7 @@ def import_burp(base_url, headers, clientId, reportId, payload) -> PTWrapperLibr
     path = f'/client/{clientId}/report/{reportId}/import/burp'
     return request.post(base_url, headers, root+path, name, payload)
 
-def import_core_impact(base_url, headers, clientId, reportId, payload) -> PTWrapperLibraryResponse:
+def import_core_impact(base_url, headers, clientId, reportId, payload):
     """
     This request **imports findings** from the tool Core Impact.
     """
@@ -59,7 +59,7 @@ def import_core_impact(base_url, headers, clientId, reportId, payload) -> PTWrap
     path = f'/client/{clientId}/report/{reportId}/import/coreimpact'
     return request.post(base_url, headers, root+path, name, payload)
 
-def import_nessus_file(base_url, headers, clientId, reportId, payload) -> PTWrapperLibraryResponse:
+def import_nessus_file(base_url, headers, clientId, reportId, payload):
     """
     This request **imports findings** from the tool Nessus.
     """
@@ -68,7 +68,7 @@ def import_nessus_file(base_url, headers, clientId, reportId, payload) -> PTWrap
     path = f'/client/{clientId}/report/{reportId}/import/nessus'
     return request.post(base_url, headers, root+path, name, payload)
 
-def import_netsparker(base_url, headers, clientId, reportId, payload) -> PTWrapperLibraryResponse:
+def import_netsparker(base_url, headers, clientId, reportId, payload):
     """
     This request **imports findings** from the tool Netsparker.
     """
@@ -77,7 +77,7 @@ def import_netsparker(base_url, headers, clientId, reportId, payload) -> PTWrapp
     path = f'/client/{clientId}/report/{reportId}/import/netsparker'
     return request.post(base_url, headers, root+path, name, payload)
 
-def import_nexpose(base_url, headers, clientId, reportId, payload) -> PTWrapperLibraryResponse:
+def import_nexpose(base_url, headers, clientId, reportId, payload):
     """
     This request **imports findings** from the tool Nexpose.
     """
@@ -86,7 +86,7 @@ def import_nexpose(base_url, headers, clientId, reportId, payload) -> PTWrapperL
     path = f'/client/{clientId}/report/{reportId}/import/nexpose'
     return request.post(base_url, headers, root+path, name, payload)
 
-def import_nipper(base_url, headers, clientId, reportId, payload) -> PTWrapperLibraryResponse:
+def import_nipper(base_url, headers, clientId, reportId, payload):
     """
     This request **imports findings** from the tool Nipper.
     """
@@ -95,7 +95,7 @@ def import_nipper(base_url, headers, clientId, reportId, payload) -> PTWrapperLi
     path = f'/client/{clientId}/report/{reportId}/import/nipper'
     return request.post(base_url, headers, root+path, name, payload)
 
-def import_nmap(base_url, headers, clientId, reportId, payload) -> PTWrapperLibraryResponse:
+def import_nmap(base_url, headers, clientId, reportId, payload):
     """
     This request **imports findings** from the tool Nmap (Vulners NSE).
     """
@@ -104,7 +104,7 @@ def import_nmap(base_url, headers, clientId, reportId, payload) -> PTWrapperLibr
     path = f'/client/{clientId}/report/{reportId}/import/nmap'
     return request.post(base_url, headers, root+path, name, payload)
 
-def import_openvas(base_url, headers, clientId, reportId, payload) -> PTWrapperLibraryResponse:
+def import_openvas(base_url, headers, clientId, reportId, payload):
     """
     This request **imports findings** from the tool OpenVAS.
     """
@@ -113,7 +113,7 @@ def import_openvas(base_url, headers, clientId, reportId, payload) -> PTWrapperL
     path = f'/client/{clientId}/report/{reportId}/import/openvas'
     return request.post(base_url, headers, root+path, name, payload)
 
-def import_qualys(base_url, headers, clientId, reportId, payload) -> PTWrapperLibraryResponse:
+def import_qualys(base_url, headers, clientId, reportId, payload):
     """
     This request **imports findings** from the tool Qualys.
     """
@@ -122,7 +122,7 @@ def import_qualys(base_url, headers, clientId, reportId, payload) -> PTWrapperLi
     path = f'/client/{clientId}/report/{reportId}/import/qualys'
     return request.post(base_url, headers, root+path, name, payload)
 
-def import_rapidfire(base_url, headers, clientId, reportId, payload) -> PTWrapperLibraryResponse:
+def import_rapidfire(base_url, headers, clientId, reportId, payload):
     """
     This request **imports findings** from the tool RapidFire.
     """
@@ -131,7 +131,7 @@ def import_rapidfire(base_url, headers, clientId, reportId, payload) -> PTWrappe
     path = f'/client/{clientId}/report/{reportId}/import/rapidfire'
     return request.post(base_url, headers, root+path, name, payload)
 
-def import_scythe(base_url, headers, clientId, reportId, payload) -> PTWrapperLibraryResponse:
+def import_scythe(base_url, headers, clientId, reportId, payload):
     """
     This request **imports findings** from the tool SCYTHE.
     """
@@ -140,7 +140,7 @@ def import_scythe(base_url, headers, clientId, reportId, payload) -> PTWrapperLi
     path = f'/client/{clientId}/report/{reportId}/import/scythe'
     return request.post(base_url, headers, root+path, name, payload)
 
-def import_veracode(base_url, headers, clientId, reportId, payload) -> PTWrapperLibraryResponse:
+def import_veracode(base_url, headers, clientId, reportId, payload):
     """
     This request **imports findings** from the tool Vercode.
     """
@@ -149,7 +149,7 @@ def import_veracode(base_url, headers, clientId, reportId, payload) -> PTWrapper
     path = f'/client/{clientId}/report/{reportId}/import/veracode'
     return request.post(base_url, headers, root+path, name, payload)
 
-def import_ptrac(base_url, headers, clientId, reportId, payload) -> PTWrapperLibraryResponse:
+def import_ptrac(base_url, headers, clientId, reportId, payload):
     """
     This request **imports findings** that is in PTRAC format.
     """

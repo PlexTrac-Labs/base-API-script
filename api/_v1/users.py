@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def get_authenticated_user(base_url, headers) -> PTWrapperLibraryResponse:
+def get_authenticated_user(base_url, headers):
     """
     This request **retrieves information** about the user executing the endpoint, such as name, admin status, role, tenant ID, user ID, etc.
     """
@@ -9,7 +9,7 @@ def get_authenticated_user(base_url, headers) -> PTWrapperLibraryResponse:
     path = f'/user/whoami'
     return request.get(base_url, headers, root+path, name)
 
-def update_user(base_url, headers, payload) -> PTWrapperLibraryResponse:
+def update_user(base_url, headers, payload):
     """
     This request **updates information** about the user executing the endpoint.
     """
@@ -18,7 +18,7 @@ def update_user(base_url, headers, payload) -> PTWrapperLibraryResponse:
     path = f'/user/update'
     return request.put(base_url, headers, root+path, name, payload)
 
-def change_password(base_url, headers, payload) -> PTWrapperLibraryResponse:
+def change_password(base_url, headers, payload):
     """
     This request **changes the password** for an existing user.
     """
@@ -27,7 +27,7 @@ def change_password(base_url, headers, payload) -> PTWrapperLibraryResponse:
     path = f'/user/changepass'
     return request.put(base_url, headers, root+path, name, payload)
 
-def forgot_password(base_url, headers, payload) -> PTWrapperLibraryResponse:
+def forgot_password(base_url, headers, payload):
     """
     This request **sends a password recovery email** to an existing user based on the email address provided in the query.
     """
@@ -36,7 +36,7 @@ def forgot_password(base_url, headers, payload) -> PTWrapperLibraryResponse:
     path = f'/user/forgotpass'
     return request.post(base_url, headers, root+path, name, payload)
 
-def set_mfa_token(base_url, headers) -> PTWrapperLibraryResponse:
+def set_mfa_token(base_url, headers):
     """
     This request **sets the multi-factor authentication token** of the current authenticated user.
     """
@@ -45,7 +45,7 @@ def set_mfa_token(base_url, headers) -> PTWrapperLibraryResponse:
     path = f'/user/mfa/token'
     return request.put(base_url, headers, root+path, name)
 
-def disable_mfa_token(base_url, headers) -> PTWrapperLibraryResponse:
+def disable_mfa_token(base_url, headers):
     """
     This request **disables the multi-factor authentication token** of the current authenticated user.
     """
@@ -54,7 +54,7 @@ def disable_mfa_token(base_url, headers) -> PTWrapperLibraryResponse:
     path = f'/user/mfa/token/disable'
     return request.put(base_url, headers, root+path, name)
 
-def get_user_notifications(base_url, headers, limit, skip, read) -> PTWrapperLibraryResponse:
+def get_user_notifications(base_url, headers, limit, skip, read):
     """
     This request **retrieves notifications** for the current authenticated user.
 
@@ -68,7 +68,7 @@ def get_user_notifications(base_url, headers, limit, skip, read) -> PTWrapperLib
     path = f'/user/notifications?limit={limit}?skip={skip}?read={read}'
     return request.get(base_url, headers, root+path, name)
 
-def update_read_notifications(base_url, headers, payload) -> PTWrapperLibraryResponse:
+def update_read_notifications(base_url, headers, payload):
     """
     Update the notifications that have been read by the current authenticated user
     """

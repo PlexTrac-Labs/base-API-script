@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def get_tenant_users(base_url, headers, tenantId) -> PTWrapperLibraryResponse:
+def get_tenant_users(base_url, headers, tenantId):
     """
     This request **retrieves a list of all users** in a tenant.
     """

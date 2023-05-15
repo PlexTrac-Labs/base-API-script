@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def list_clients(base_url, headers) -> PTWrapperLibraryResponse:
+def list_clients(base_url, headers):
     """
     This request retrieves **all** clients for a tenant that you are **authorized** to view.
 
@@ -21,7 +21,7 @@ Below is the structure of the summaried JSON returned on a successful call:
     path = f'/client/list'
     return request.get(base_url, headers, root+path, name)
 
-def get_client(base_url, headers, clientId) -> PTWrapperLibraryResponse:
+def get_client(base_url, headers, clientId):
     """
     This request retrieves information on a client for a tenant that you are **authorized** to view.
 
@@ -34,7 +34,7 @@ A successsfull call returns the JSON object of the cient stored in hte DB. See [
     path = f'/client/{clientId}'
     return request.get(base_url, headers, root+path, name)
 
-def create_client(base_url, headers, payload) -> PTWrapperLibraryResponse:
+def create_client(base_url, headers, payload):
     """
     This request **creates** a new client within a tenant.
 
@@ -63,7 +63,7 @@ Below is returned on a successful call:
     path = f'/client/create'
     return request.post(base_url, headers, root+path, name, payload)
 
-def update_client(base_url, headers, clientId, payload) -> PTWrapperLibraryResponse:
+def update_client(base_url, headers, clientId, payload):
     """
     This request updates an existing client within a tenant.
 
@@ -83,7 +83,7 @@ Below is returned on a successful call:
     path = f'/client/{clientId}'
     return request.put(base_url, headers, root+path, name, payload)
 
-def delete_client(base_url, headers, clientId) -> PTWrapperLibraryResponse:
+def delete_client(base_url, headers, clientId):
     """
     This request **removes** a client from a tenant.
 
@@ -101,7 +101,7 @@ When successful, the following parameters will be returned:
     path = f'/client/{clientId}'
     return request.delete(base_url, headers, root+path, name)
 
-def add_client_logo(base_url, headers, clientId, payload) -> PTWrapperLibraryResponse:
+def add_client_logo(base_url, headers, clientId, payload):
     """
     This request **creates** a logo for a client. The file must be JPEG or PNG.
 
@@ -119,7 +119,7 @@ Below is returned on a successful call:
     path = f'/client/{clientId}/logo'
     return request.post(base_url, headers, root+path, name, payload)
 
-def delete_client_logo(base_url, headers, clientId, payload) -> PTWrapperLibraryResponse:
+def delete_client_logo(base_url, headers, clientId, payload):
     """
     This request **removes** a logo for a client.
 
@@ -137,7 +137,7 @@ Below is returned on a successful call:
     path = f'/client/{clientId}/logo'
     return request.delete(base_url, headers, root+path, name, payload)
 
-def list_tenant_client_users(base_url, headers, tenantId, clientId) -> PTWrapperLibraryResponse:
+def list_tenant_client_users(base_url, headers, tenantId, clientId):
     """
     This request **retrieves a list of all users** for a specific client.
     """
@@ -146,7 +146,7 @@ def list_tenant_client_users(base_url, headers, tenantId, clientId) -> PTWrapper
     path = f'/tenant/{tenantId}/client/{clientId}/users'
     return request.get(base_url, headers, root+path, name)
 
-def assign_user_to_client(base_url, headers, tenantId, clientId, payload) -> PTWrapperLibraryResponse:
+def assign_user_to_client(base_url, headers, tenantId, clientId, payload):
     """
     DEPRECATED - See v2 [Bulk Assign Users to Client](https://api-docs.plextrac.com/#8b017c78-cdcf-4046-9d25-ca6d0dcb1d82)
 
@@ -161,7 +161,7 @@ Assign a user to a client within your tenancy
     path = f'/tenant/{tenantId}/client/{clientId}/user/assign'
     return request.post(base_url, headers, root+path, name, payload)
 
-def remove_user_from_client(base_url, headers, tenantId, clientId, payload) -> PTWrapperLibraryResponse:
+def remove_user_from_client(base_url, headers, tenantId, clientId, payload):
     """
     Revoke a user's authorization from a client
     """
@@ -170,7 +170,7 @@ def remove_user_from_client(base_url, headers, tenantId, clientId, payload) -> P
     path = f'/tenant/{tenantId}/client/{clientId}/user/remove'
     return request.post(base_url, headers, root+path, name, payload)
 
-def available_tenant_users(base_url, headers, tenantId, clientId) -> PTWrapperLibraryResponse:
+def available_tenant_users(base_url, headers, tenantId, clientId):
     """
     No description in Postman
     """

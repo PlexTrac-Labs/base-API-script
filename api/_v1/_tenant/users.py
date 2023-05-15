@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def list_tenant_users(base_url, headers, tenantId) -> PTWrapperLibraryResponse:
+def list_tenant_users(base_url, headers, tenantId):
     """
     This request **retrieves a list of all users** in a tenant.
     """
@@ -9,7 +9,7 @@ def list_tenant_users(base_url, headers, tenantId) -> PTWrapperLibraryResponse:
     path = f'/tenant/{tenantId}/user/list'
     return request.get(base_url, headers, root+path, name)
 
-def create_user(base_url, headers, tenantId, payload) -> PTWrapperLibraryResponse:
+def create_user(base_url, headers, tenantId, payload):
     """
     Create a new user in your tenant
     """
@@ -18,7 +18,7 @@ def create_user(base_url, headers, tenantId, payload) -> PTWrapperLibraryRespons
     path = f'/tenant/{tenantId}/user/create/bulk'
     return request.post(base_url, headers, root+path, name, payload)
 
-def create_user_deprecated(base_url, headers, tenantId, payload) -> PTWrapperLibraryResponse:
+def create_user_deprecated(base_url, headers, tenantId, payload):
     """
     Create a new user in your tenant
 
@@ -29,7 +29,7 @@ def create_user_deprecated(base_url, headers, tenantId, payload) -> PTWrapperLib
     path = f'/tenant/{tenantId}/user/create'
     return request.post(base_url, headers, root+path, name, payload)
 
-def enabledisable_user(base_url, headers, tenantId, payload) -> PTWrapperLibraryResponse:
+def enabledisable_user(base_url, headers, tenantId, payload):
     """
     Toggle a user's authorization to your tenancy
     """

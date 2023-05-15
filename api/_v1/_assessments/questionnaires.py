@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def list_questionnaires(base_url, headers, tenantId) -> PTWrapperLibraryResponse:
+def list_questionnaires(base_url, headers, tenantId):
     """
     This request retrieves **all** assessments for a tenant.
 
@@ -19,7 +19,7 @@ Below is returned on a successful call:
     path = f'/tenant/{tenantId}/assessments'
     return request.get(base_url, headers, root+path, name)
 
-def delete_questionnaire(base_url, headers, tenantId, questionnaireId) -> PTWrapperLibraryResponse:
+def delete_questionnaire(base_url, headers, tenantId, questionnaireId):
     """
     This request **removes** an assessment from a tenant.
 

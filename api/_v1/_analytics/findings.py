@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def retreive_analytics_findings(base_url, headers, payload) -> PTWrapperLibraryResponse:
+def retreive_analytics_findings(base_url, headers, payload):
     """
     This request retrieves **analytics on findings and reports per client,** providing a total count of per client and total count by severity.
     """
@@ -9,7 +9,7 @@ def retreive_analytics_findings(base_url, headers, payload) -> PTWrapperLibraryR
     path = f'/clients/analytics/findings'
     return request.post(base_url, headers, root+path, name, payload)
 
-def retreive_analytics_findings_aging(base_url, headers, payload) -> PTWrapperLibraryResponse:
+def retreive_analytics_findings_aging(base_url, headers, payload):
     """
     This request retrieves **analytics on findings based on the date of finding** per client, providing a total count of findings per client and total count by severity. The query defaults to 30 days but can be set to 60 and 90 days.
     """
@@ -18,7 +18,7 @@ def retreive_analytics_findings_aging(base_url, headers, payload) -> PTWrapperLi
     path = f'/clients/analytics/findings/aging'
     return request.post(base_url, headers, root+path, name, payload)
 
-def get_analytics_bootstrap_findings(base_url, headers, payload) -> PTWrapperLibraryResponse:
+def get_analytics_bootstrap_findings(base_url, headers, payload):
     """
     This request retrieves **asset** **analytics on findings** per client.
     """

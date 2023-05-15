@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def get_authenticated_user(base_url, headers) -> PTWrapperLibraryResponse:
+def get_authenticated_user(base_url, headers):
     """
     This request **retrieves user info** about the currently authenticated user.
     """
@@ -9,7 +9,7 @@ def get_authenticated_user(base_url, headers) -> PTWrapperLibraryResponse:
     path = f'/whoami'
     return request.get(base_url, headers, root+path, name)
 
-def get_user_findings(base_url, headers, payload) -> PTWrapperLibraryResponse:
+def get_user_findings(base_url, headers, payload):
     """
     This request **retrieves a list of findings assigned to the user making the API call.**
     """
@@ -18,7 +18,7 @@ def get_user_findings(base_url, headers, payload) -> PTWrapperLibraryResponse:
     path = f'/user/findings'
     return request.post(base_url, headers, root+path, name, payload)
 
-def delete_user(base_url, headers, payload) -> PTWrapperLibraryResponse:
+def delete_user(base_url, headers, payload):
     """
     This request **deletes** the user associated with the email sent in the payload.
     """

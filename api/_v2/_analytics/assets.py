@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def retrieve_analytics_assets(base_url, headers, payload) -> PTWrapperLibraryResponse:
+def retrieve_analytics_assets(base_url, headers, payload):
     """
     This request **retrieves information about assets** stored in the **Clients** module.
 
@@ -19,7 +19,7 @@ POST:
     path = f'/clients/analytics/assets/overview'
     return request.post(base_url, headers, root+path, name, payload)
 
-def retrieve_analytics_assets_with_filter(base_url, headers, payload, limit, offset) -> PTWrapperLibraryResponse:
+def retrieve_analytics_assets_with_filter(base_url, headers, payload, limit, offset):
     """
     This request **retrieves information about assets** stored under clients and provides the ability to filter and limit the data set returned.
 
@@ -48,7 +48,7 @@ GET:
     path = f'/clients/analytics/assets?limit={limit}?offset={offset}'
     return request.post(base_url, headers, root+path, name, payload)
 
-def retrieve_analytics_assets___suggestion(base_url, headers, payload) -> PTWrapperLibraryResponse:
+def retrieve_analytics_assets___suggestion(base_url, headers, payload):
     """
     No description in Postman
     """

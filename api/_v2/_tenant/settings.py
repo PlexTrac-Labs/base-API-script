@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def update_settings(base_url, headers, tenantId, payload) -> PTWrapperLibraryResponse:
+def update_settings(base_url, headers, tenantId, payload):
     """
     No description in Postman
     """

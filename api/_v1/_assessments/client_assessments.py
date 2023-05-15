@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def list_client_assessments(base_url, headers, tenantId, clientId) -> PTWrapperLibraryResponse:
+def list_client_assessments(base_url, headers, tenantId, clientId):
     """
     This request retrieves a list of **all** assessments for **a specific client** within a tenant.
 
@@ -28,7 +28,7 @@ Below is returned on a successful call:
     path = f'/tenant/{tenantId}/client/{clientId}/assessments'
     return request.get(base_url, headers, root+path, name)
 
-def get_client_assessment(base_url, headers, tenantId, clientId, assessmentId) -> PTWrapperLibraryResponse:
+def get_client_assessment(base_url, headers, tenantId, clientId, assessmentId):
     """
     This request retrieves a list of **a specific** assessment for **a specific client** within a tenant.
 
@@ -39,7 +39,7 @@ The `instanceUrl` , `tenantId` , `clientId`, and `assessmentID` is needed to exe
     path = f'/tenant/{tenantId}/client/{clientId}/assessment/{assessmentId}'
     return request.get(base_url, headers, root+path, name)
 
-def create_client_assessment(base_url, headers, tenantId, clientId, payload) -> PTWrapperLibraryResponse:
+def create_client_assessment(base_url, headers, tenantId, clientId, payload):
     """
     This request **creates** a new assessment for a specific client within a tenant.
 
@@ -61,7 +61,7 @@ Below is returned on a successful call:
     path = f'/tenant/{tenantId}/client/{clientId}/assessment'
     return request.post(base_url, headers, root+path, name, payload)
 
-def update_client_assessment(base_url, headers, tenantId, clientId, assessmentId, payload) -> PTWrapperLibraryResponse:
+def update_client_assessment(base_url, headers, tenantId, clientId, assessmentId, payload):
     """
     This request **updates** an assessment.
 
@@ -72,7 +72,7 @@ The `instanceUrl` , `tenantId`, `assessmentId` and `clientId` is needed to execu
     path = f'/tenant/{tenantId}/client/{clientId}/assessment/{assessmentId}'
     return request.put(base_url, headers, root+path, name, payload)
 
-def delete_client_assessment(base_url, headers, tenantId, clientId, assessmentId) -> PTWrapperLibraryResponse:
+def delete_client_assessment(base_url, headers, tenantId, clientId, assessmentId):
     """
     This request will **delete** an assessment for a client.
 
@@ -92,7 +92,7 @@ When successful, the following parameters will be returned:
     path = f'/tenant/{tenantId}/client/{clientId}/assessment/{assessmentId}'
     return request.delete(base_url, headers, root+path, name)
 
-def create_report_from_assessment_questionnaire(base_url, headers, tenantId, clientId, assessmentId, payload) -> PTWrapperLibraryResponse:
+def create_report_from_assessment_questionnaire(base_url, headers, tenantId, clientId, assessmentId, payload):
     """
     This request will **create a report** from assessments for a client.
 

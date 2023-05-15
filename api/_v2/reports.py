@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def get_report_list(base_url, headers, payload) -> PTWrapperLibraryResponse:
+def get_report_list(base_url, headers, payload):
     """
     This request **retrieves a list of reports** for a tenant.
 
@@ -33,7 +33,7 @@ The following values can be used in the `sort.order` field:
     path = f'/reports'
     return request.post(base_url, headers, root+path, name, payload)
 
-def bulk_delete_reports(base_url, headers, payload) -> PTWrapperLibraryResponse:
+def bulk_delete_reports(base_url, headers, payload):
     """
     No description in Postman
     """
@@ -42,7 +42,7 @@ def bulk_delete_reports(base_url, headers, payload) -> PTWrapperLibraryResponse:
     path = f'/reports/bulk/delete'
     return request.post(base_url, headers, root+path, name, payload)
 
-def bulk_add_tags_to_report(base_url, headers, payload) -> PTWrapperLibraryResponse:
+def bulk_add_tags_to_report(base_url, headers, payload):
     """
     No description in Postman
     """
@@ -51,7 +51,7 @@ def bulk_add_tags_to_report(base_url, headers, payload) -> PTWrapperLibraryRespo
     path = f'/reports/bulk/tags'
     return request.post(base_url, headers, root+path, name, payload)
 
-def bulk_assign_reviewers_to_report(base_url, headers, payload) -> PTWrapperLibraryResponse:
+def bulk_assign_reviewers_to_report(base_url, headers, payload):
     """
     The reviewer email must match an existing PT user email.
     """
@@ -60,7 +60,7 @@ def bulk_assign_reviewers_to_report(base_url, headers, payload) -> PTWrapperLibr
     path = f'/reports/bulk/reviewers'
     return request.post(base_url, headers, root+path, name, payload)
 
-def bulk_adjust_status_of_report(base_url, headers, payload) -> PTWrapperLibraryResponse:
+def bulk_adjust_status_of_report(base_url, headers, payload):
     """
     The reviewer email must match an existing PT user email.
     """

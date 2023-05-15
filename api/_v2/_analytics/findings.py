@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def get_finding_analytics_bootstrap(base_url, headers, payload) -> PTWrapperLibraryResponse:
+def get_finding_analytics_bootstrap(base_url, headers, payload):
     """
     StartFragment
 

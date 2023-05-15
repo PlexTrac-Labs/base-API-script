@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def list_report_templates(base_url, headers, tenantId) -> PTWrapperLibraryResponse:
+def list_report_templates(base_url, headers, tenantId):
     """
     This request **lists all report templates** for a tenant.
     """
@@ -9,7 +9,7 @@ def list_report_templates(base_url, headers, tenantId) -> PTWrapperLibraryRespon
     path = f'/tenant/{tenantId}/report-templates'
     return request.get(base_url, headers, root+path, name)
 
-def get_report_template(base_url, headers, tenantId, reportTemplateId) -> PTWrapperLibraryResponse:
+def get_report_template(base_url, headers, tenantId, reportTemplateId):
     """
     This request **retrieves a specific report template** within a tenant.
     """
@@ -18,7 +18,7 @@ def get_report_template(base_url, headers, tenantId, reportTemplateId) -> PTWrap
     path = f'/tenant/{tenantId}/report-template/{reportTemplateId}'
     return request.get(base_url, headers, root+path, name)
 
-def create_report_template(base_url, headers, tenantId, payload) -> PTWrapperLibraryResponse:
+def create_report_template(base_url, headers, tenantId, payload):
     """
     This request **creates** **a report template** within a tenant.
     """
@@ -27,7 +27,7 @@ def create_report_template(base_url, headers, tenantId, payload) -> PTWrapperLib
     path = f'/tenant/{tenantId}/report-template'
     return request.put(base_url, headers, root+path, name, payload)
 
-def update_report_template(base_url, headers, tenantId, reportTemplateId, payload) -> PTWrapperLibraryResponse:
+def update_report_template(base_url, headers, tenantId, reportTemplateId, payload):
     """
     This request **updates** **a report template** within a tenant.
     """
@@ -36,7 +36,7 @@ def update_report_template(base_url, headers, tenantId, reportTemplateId, payloa
     path = f'/tenant/{tenantId}/report-template/{reportTemplateId}'
     return request.put(base_url, headers, root+path, name, payload)
 
-def delete_report_template(base_url, headers, tenantId, reportTemplateId) -> PTWrapperLibraryResponse:
+def delete_report_template(base_url, headers, tenantId, reportTemplateId):
     """
     No description in Postman
     """
@@ -45,7 +45,7 @@ def delete_report_template(base_url, headers, tenantId, reportTemplateId) -> PTW
     path = f'/tenant/{tenantId}/report-template/{reportTemplateId}'
     return request.delete(base_url, headers, root+path, name)
 
-def list_findings_templates(base_url, headers) -> PTWrapperLibraryResponse:
+def list_findings_templates(base_url, headers):
     """
     This request **lists all findings templates** for a tenant.
     """
@@ -54,7 +54,7 @@ def list_findings_templates(base_url, headers) -> PTWrapperLibraryResponse:
     path = f'/field-templates'
     return request.get(base_url, headers, root+path, name)
 
-def get_findings_template(base_url, headers, findingTemplateId) -> PTWrapperLibraryResponse:
+def get_findings_template(base_url, headers, findingTemplateId):
     """
     This request retrieves **a findings template**
     """
@@ -63,7 +63,7 @@ def get_findings_template(base_url, headers, findingTemplateId) -> PTWrapperLibr
     path = f'/field-template/{findingTemplateId}'
     return request.get(base_url, headers, root+path, name)
 
-def create_finding_template(base_url, headers, tenantId, payload) -> PTWrapperLibraryResponse:
+def create_finding_template(base_url, headers, tenantId, payload):
     """
     This request **creates** **a findings template** within a tenant.
     """
@@ -72,7 +72,7 @@ def create_finding_template(base_url, headers, tenantId, payload) -> PTWrapperLi
     path = f'/tenant/{tenantId}/field-template'
     return request.put(base_url, headers, root+path, name, payload)
 
-def update_finding_template(base_url, headers, tenantId, findingTemplateId, payload) -> PTWrapperLibraryResponse:
+def update_finding_template(base_url, headers, tenantId, findingTemplateId, payload):
     """
     Update a finding template in your tenancy
     """
@@ -81,7 +81,7 @@ def update_finding_template(base_url, headers, tenantId, findingTemplateId, payl
     path = f'/tenant/{tenantId}/field-template/{findingTemplateId}'
     return request.put(base_url, headers, root+path, name, payload)
 
-def delete_finding_template(base_url, headers, tenantId, findingTemplateId) -> PTWrapperLibraryResponse:
+def delete_finding_template(base_url, headers, tenantId, findingTemplateId):
     """
     No description in Postman
     """

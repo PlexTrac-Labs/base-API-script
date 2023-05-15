@@ -1,6 +1,6 @@
 from utils import request_handler as request
 
-def get_artifacts(base_url, headers, payload) -> PTWrapperLibraryResponse:
+def get_artifacts(base_url, headers, payload):
     """
     Return a list of filtered artifact files.
 
@@ -11,7 +11,7 @@ The `components` property is optional.
     path = f'/file-manager/artifacts'
     return request.post(base_url, headers, root+path, name, payload)
 
-def download_an_artifact(base_url, headers, artifactId) -> PTWrapperLibraryResponse:
+def download_an_artifact(base_url, headers, artifactId):
     """
     No description in Postman
     """
@@ -20,7 +20,7 @@ def download_an_artifact(base_url, headers, artifactId) -> PTWrapperLibraryRespo
     path = f'/file-manager/artifacts/{artifactId}'
     return request.get(base_url, headers, root+path, name)
 
-def upload_an_artifact_file(base_url, headers, payload) -> PTWrapperLibraryResponse:
+def upload_an_artifact_file(base_url, headers, payload):
     """
     Uploads a file to the tenant. These files live in a single location and are related to clients and reports through the `relations` attribute. Each file has a list of `components` or categorys it belongs to. This is used for filtering when loading files to display in platform. Files with different components are displayed in different locations.
 
@@ -76,7 +76,7 @@ report_artifacts
     path = f'/file-manager/upload'
     return request.post(base_url, headers, root+path, name, payload)
 
-def delete_an_artifact(base_url, headers, artifactId) -> PTWrapperLibraryResponse:
+def delete_an_artifact(base_url, headers, artifactId):
     """
     This request **deletes an artifact** from the tenant.
 
