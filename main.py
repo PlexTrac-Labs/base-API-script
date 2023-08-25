@@ -71,7 +71,7 @@ if __name__ == '__main__':
     import api
 
     client_id = "<id_of_client>"
-    response = api._v1.clients.get_client(auth.base_url, auth.get_auth_headers(), client_id)
+    response = api.clients.get_client(auth.base_url, auth.get_auth_headers(), client_id)
 
 
     """
