@@ -55,7 +55,7 @@ class Auth():
 
         #validate
         try:
-            response = api._v1.authentication.root_request(self.base_url, {}) # non authenticated endpoint - does not require any headers - used to see if we can connect to the api
+            response = api.tenant.root_request(self.base_url, {}) # non authenticated endpoint - does not require any headers - used to see if we can connect to the api
             log.debug(response)
             if not response.has_json_response: # if the base_url is not valid, the response will not contain any JSON
                 if input.retry("Could not validate URL. Either the API is offline or it was entered incorrectly\nExample: https://company.plextrac.com"):
@@ -96,7 +96,7 @@ class Auth():
         else:
             log.info(f'Using cf_token from config...')
 
-        response = api._v1.authentication.root_request(self.base_url, headers={"cf-access-token": self.cf_token})
+        response = api.tenant.root_request(self.base_url, headers={"cf-access-token": self.cf_token})
             
         if response.json.get('text') != "Authenticate at /authenticate":
             if input.retry("Could not validate instance URL."):
@@ -126,7 +126,7 @@ class Auth():
             "password": self.password
         }
         
-        response = api._v1.authentication.authentication(self.base_url, self.auth_headers, authenticate_data)
+        response = api._authentication.authenticate.authentication(self.base_url, self.auth_headers, authenticate_data)
         
         # the following conditional can fail due to:
         # - invalid credentials
@@ -150,7 +150,7 @@ class Auth():
                 "token": input.prompt_user("Please enter your 6 digit MFA code")
             }
             
-            response = api._v1.authentication.multi_factor_authentication(self.base_url, self.auth_headers, mfa_auth_data)
+            response = api._authentication.authenticate.multi_factor_authentication(self.base_url, self.auth_headers, mfa_auth_data)
             if response.json.get('status') != "success":
                 if input.retry("Invalid MFA Code."):
                     return self.handle_authentication()
