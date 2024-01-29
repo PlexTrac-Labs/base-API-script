@@ -27,7 +27,7 @@ Below is a list of the information that will be returned on a successful call:
     path = f'/template/list'
     return request.get(base_url, headers, root+path, name)
 
-def get_writeups(base_url, headers, writeupId):
+def get_writeup(base_url, headers, writeupId):
     """
     This request retrieves **a defined** writeup.
 
@@ -49,7 +49,7 @@ Below is a list of the information that will be returned on a successful call:
 | tenantId | tenant ID that writeup exists under | 40632 |
 | title | writeup title | Password returned in URL query string |
     """
-    name = "Get Writeups"
+    name = "Get Writeup"
     root = "/api/v1"
     path = f'/template/{writeupId}'
     return request.get(base_url, headers, root+path, name)
@@ -75,6 +75,10 @@ Below is a list of information needed to fulfil the request.
 | risk_score | used for CVSS 3.1 scores (other CVSS version are handled in \`fields\`) |  |
 | calculated_severity | boolean of whether the finding severity was set by the calculated CVSS3.1 score | true |
 | common_identifiers | CVE and CWE data |  |
+
+**Copy Finding to WriteupsDB**
+
+This endpoint should be used when creating a new writeup based on a finding. Use the [GET Get Finding](https://api-docs.plextrac.com/#2744f99d-bf3a-4174-93f6-a0f05e99fcdc) to get the finding, add the `repositoryID` key, and send as the payload of this request.
     """
     name = "Create Writeups"
     root = "/api/v1"
@@ -132,7 +136,7 @@ When successful, the following parameters will be returned:
 
 def add_writeup_to_report(base_url, headers, writeupId, payload):
     """
-    See v2 endpoint [Bulk Add Writeups to Report](https://api-docs.plextrac.com/#3806f48a-985b-4a63-b90f-9ca18e4a499b)
+    See v2 endpoint [Bulk Add Writeups to Report](https://api-docs.plextrac.com/#83f5ce4b-572c-4de9-aa77-28c5943ce78a) for similar functionality.
 
 This request will **add a writeup** to a report.
 
@@ -152,17 +156,6 @@ def bulk_add_writeups_to_report(base_url, headers, payload):
     path = f'/writeups/bulk/addToReport'
     return request.post(base_url, headers, root+path, name, payload)
 
-def copy_finding_to_writeups_repository(base_url, headers, payload):
-    """
-    **Deprecated**: Since this endpoint's payload requires the finding object, it proves the same functionality as [POST Copy Finding to Writeups Repository](https://api-docs.plextrac.com/#e05be880-df62-4eca-8b5f-cc98b7ce7e2a) which should be used instead.
-
-This request **copies a finding from a report** and puts into a **WriteUpsDB** repository.
-    """
-    name = "Copy Finding to Writeups Repository"
-    root = "/api/v2"
-    path = f'/repositories/copyFlawToWriteupsRepository'
-    return request.post(base_url, headers, root+path, name, payload)
-
 def get_writeups_from_repository(base_url, headers, repositoryId, payload):
     """
     This request **retrieves all writeups from a specific repository** in the **WriteupsD**B module.
@@ -179,6 +172,17 @@ def add_writeups_to_repository(base_url, headers, repositoryId, payload):
     name = "Add Writeups to Repository"
     root = "/api/v2"
     path = f'/repositories/{repositoryId}/addWriteups'
+    return request.post(base_url, headers, root+path, name, payload)
+
+def copy_finding_to_writeups_repository(base_url, headers, payload):
+    """
+    **Deprecated**: Since this endpoint's payload requires the finding object, it proves the same functionality as [POST Create Writeups](https://api-docs.plextrac.com/#ebbc5cf9-f24c-41ea-a393-558f1f3e0529) which should be used instead.
+
+This request **copies a finding from a report** and puts into a **WriteUpsDB** repository.
+    """
+    name = "Copy Finding to Writeups Repository"
+    root = "/api/v2"
+    path = f'/repositories/copyFlawToWriteupsRepository'
     return request.post(base_url, headers, root+path, name, payload)
 
 def import_writeups_to_repository(base_url, headers, source, payload):

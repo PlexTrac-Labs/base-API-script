@@ -38,3 +38,63 @@ The `tagId` should be a string with the format `tag_[scope]_[ownerId]_[name]` i.
     root = "/api/v1"
     path = f'/tenant/{tenantId}/tag/{tagId}'
     return request.delete(base_url, headers, root+path, name)
+
+def search_tenant_tags(base_url, headers, tenantId, text, limit, offset):
+    """
+    This endpoint allows users to search for tags within a specific tenant.
+
+#### Request Parameters
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| text | String | The text to search for within the tags |
+| limit | Integer | The maximum number of tags to retrieve (optional) |
+| offset | Integer | The number of tags to skip before starting to retrieve (optional) |
+
+#### Response Fields
+
+In the event of a successful request, the response will contain a 'count' array with the total number of matching tags and a 'tags' array with the list of tags. Each tag object will contain the following fields:
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| id | String | Unique identifier of the tag |
+| name | String | Name of the tag |
+
+In the event of an error, the response will not contain any specific error fields.
+
+    Query Parameters:
+    text: partial text of tag to search - example (example)
+    limit: limit of results to return - example (20)
+    offset: offset of results for pagination - example (0)
+    """
+    name = "Search Tenant Tags"
+    root = "/api/v1"
+    path = f'/tenant/{tenantId}/tag/search?text={text}?limit={limit}?offset={offset}'
+    return request.get(base_url, headers, root+path, name)
+
+def find_tenant_tag(base_url, headers, tenantId, payload):
+    """
+    This endpoint allows developers to find a tag for a specific tenant.
+
+#### Request Parameters
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| tenantId | String | The unique identifier of the tenant |
+|  |  |  |
+
+#### Response Fields
+
+In the event of a successful request, the response will contain an object with the following fields:
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| id | String | The unique identifier of the tag |
+| name | String | The name of the tag |
+
+In the event of an error, the response will contain an 'error' object with a 'message' field describing the error.
+    """
+    name = "Find Tenant Tag"
+    root = "/api/v1"
+    path = f'/tenant/{tenantId}/tag/find'
+    return request.post(base_url, headers, root+path, name, payload)

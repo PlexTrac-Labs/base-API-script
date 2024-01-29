@@ -1,5 +1,6 @@
 from api import _authentication
 from api import _admin
+from api import affected_assets
 from api import _analytics
 from api import _assessments
 from api import assets
@@ -22,3 +23,5 @@ from api import _templates
 from api import _tenant
 from api import tenant
 from api import users
+from api import graph_ql_queries
+from api import graph_ql_mutations

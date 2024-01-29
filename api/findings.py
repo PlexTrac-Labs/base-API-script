@@ -13,9 +13,71 @@ def get_findings_by_report(base_url, headers, clientId, reportId, payload):
     """
     This request **retrieves a list of findings for a specific report.**
 
-**pagination.limit** options:
+`pagination` is a required key while `sort` and `filters` are optional.
 
-1, 10, 50, 100, 99999
+The `pagination.limit` must be one of \[1, 10, 50, 100, 99999\]. The `pagination.offset` is the number of records to shift by, not the number of pages to shift by. i.e. offset 2, limit 10 gives you records 2-12 not 20-30
+
+The following values can be used in the `filters.by` field:
+
+- findingTags
+- searchTerm
+- createdAt
+- updatedAt
+- reopenedAt
+- closedAt
+- assignedTo
+- flaw_id
+- client_id
+- report_id
+- severity
+- source
+- status
+- subStatus
+- title
+- visibility
+    
+
+The following values can be used in the `sort.by` field:
+
+- assignedTo
+    
+- clientId
+    
+- createdAt
+    
+- updatedAt
+    
+- reopenedAt
+    
+- closedAt
+    
+- flawId
+    
+- reportId
+    
+- severity
+    
+- source
+    
+- status
+    
+- subStatus
+    
+- title
+    
+- visibility
+    
+- cvss3_1
+    
+- cve_id
+    
+- cwe_id
+    
+
+The following values can be used in the `sort.order` field:
+
+- ASC
+- DESC
     """
     name = "Get Findings by Report"
     root = "/api/v2"
@@ -41,8 +103,12 @@ See our docs on the [Finding Object](https://docs.plextrac.com/plextrac-document
 
 **Affected Assets**
 
-A finding's `affected_assets` are a copy of a `client_asset` with additional affected fields. When **adding a new** asset to a finding's affected_assets, you should use the [GET Get Asset](https://api-docs.plextrac.com/#5fa9e7be-55d3-452e-8562-00ba4a137782) endpoint, then add the following keys. See our docs on the [Asset Object](https://docs.plextrac.com/plextrac-documentation/master/plextrac-api/object-structures/asset-object) structure for more details about these affected fields.
+A finding's `affected_assets` are a copy of a `client_asset` with additional affected fields. An asset should already be created on the client before adding to a finding. Get the ID and name of the client asset, then create an entry for the finding's `affected_assets` with all of the following keys. See the example below for the payload JSON structure. See our docs on the [Asset Object](https://docs.plextrac.com/plextrac-documentation/master/plextrac-api/object-structures/asset-object) structure for more details about these affected fields.
 
+- id
+    
+- asset (name of asset)
+    
 - ports
 - status
 - locationUrl
@@ -51,7 +117,7 @@ A finding's `affected_assets` are a copy of a `client_asset` with additional aff
 - notes
     
 
-Then add this modified asset object to the finding's `affected_assets` dictionary with the key being a string of the asset's `id` and the value being the modified asset object.
+Then add this created asset object to the finding's `affected_assets` dictionary with the key being a string of the asset's `id` and the value being the JSON asset object.
 
 **Registering Tags**
 
@@ -72,7 +138,7 @@ See our docs on the [Finding Object](https://docs.plextrac.com/plextrac-document
 
 **Note:**
 
-This PUT request is meant to **replace** the finding object in the DB. Use the [GET Get Finding](https://api-docs.plextrac.com/#e903c288-8807-4df9-962f-0d86f76d9df8) endpoint to get the current finding, make necessary changes, then send that object in the payload to update the finding.
+This PUT request is meant to **replace** the finding object in the DB. Use the [GET Get Finding](https://api-docs.plextrac.com/#2744f99d-bf3a-4174-93f6-a0f05e99fcdc) endpoint to get the current finding, make necessary changes, then send that object in the payload to update the finding.
 
 The example payloads shown here do not have all the possible properties on a finding, but only acts as an example. Each finding will be slightly different depending on what data is on the finding. Some property keys won't be added to a finding until that data is added to the finding.
 
@@ -141,19 +207,3 @@ Note: The request should include the entire `findings` object, which is document
     root = "/api/v1"
     path = f'/client/{clientId}/report/{reportId}/flaw/{findingId}/status/update'
     return request.post(base_url, headers, root+path, name, payload)
-
-def get_affected_assets_by_finding(base_url, headers, clientId, reportId, findingId, offset, limit, order, filter, status):
-    """
-    This request **retrieves a paginated list of assets** for a specific finding in a specific report.
-
-    Query Parameters:
-    offset: (number, default: 0) pagination offset - example (0)
-    limit: (number, default: 10) pagination limit - example (10)
-    order: (string, default: ascend) order by asset name ascend/descend - example (ascend)
-    filter: (string) filter by asset name - example ()
-    status: (string) Open/Closed/In Process, filter by asset status - example ()
-    """
-    name = "Get Affected Assets by Finding"
-    root = "/api/v2"
-    path = f'/clients/{clientId}/reports/{reportId}/flaws/{findingId}/affected_assets?offset={offset}?limit={limit}?order={order}?filter={filter}?status={status}'
-    return request.get(base_url, headers, root+path, name)

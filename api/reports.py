@@ -4,8 +4,6 @@ def list_client_reports(base_url, headers, clientId):
     """
     This request **retrieves** a list of reports for a specific client. The information retrieved is limited and intended to provide an overview of the number of reports for a client.
 
-The `instanceUrl` and `clientId` is needed to execute the call.
-
 A successful call returns a List of JSON objects with summarized information about each report.
 
 Below is the structure of the summarized JSON returned on a successful call:
@@ -14,7 +12,25 @@ Below is the structure of the summarized JSON returned on a successful call:
 | --- | --- | --- |
 | id | report ID and client ID combined | report_500004_client_4155 |
 | doc_id | List with a single value of client ID | \[4155\] |
-| data | List of information about the report:  <br>report id  <br>report name  <br>null value  <br>report status  <br>number of findings  <br>List of operators  <br>List of reviewers  <br>epoch milliseconds of report creation date  <br> | \[500004, "Karbo Industries", null, "Draft", 1, \["test.operator@email.com"\], \["test.reviewer@email.com"\], 1680796600582\]  <br> |
+| data | List of information about the report. See table below. | \[500004, "Karbo Industries", null, "Draft", 1, \["test.operator@email.com"\], \["test.reviewer@email.com"\], 1680796600582, "2020-08-01T08:00:00.000000Z", "2020-08-01T08:00:00.000000Z", \[ "report_tag" \], "default", "default"\] |
+
+`data` Array Values
+
+| **data** | **definition** | **example value** |
+| --- | --- | --- |
+| Report ID | string report ID | 500007 |
+| Name | string of report name | Test Report |
+| Null Value | A null value is inserted to maintain ordering for legacy implementations, from when a value was removed. | null |
+| Status | string of report status | Draft |
+| Findings Count | number of findings in the report | 15 |
+| Operators | list of emails for all users assigned as a report operator | \["example.email@plextrac.com"\] |
+| Reviewers | list of emails for all users assigned as a report reviewers | \["example.email@plextrac.com"\] |
+| Created At Date | number of milliseconds since Epoch when the report was created | 1678135873086 |
+| Start Date | string of report start date | 2020-08-01T08:00:00.000000Z |
+| End Date | string of report end date | 2020-08-31T08:00:00.000000Z |
+| Tags | list of report tags | \[ "report_tag" \] |
+| Report Template Name | string name of selected report template | default |
+| Findings Layout Name | string name of selected findings layout | default |
     """
     name = "List Client Reports"
     root = "/api/v1"
@@ -201,7 +217,7 @@ The endpoint needs the report data and Jinja2 coded Word .docx file (Export Temp
 
 If the Report Template field in a report is selected, that report already has a reference to the Jinja2 Export Template. If not, add the additional `templateID` query parameter. This is the ID of a previously uploaded Export Template. See the LIst Export Templates endpoing for more info about retrieving this ID.
 
-More information on [exporting a report]() can be found on the PlexTrac Product Documentation site.
+More information on [exporting a report](https://docs.plextrac.com/plextrac-documentation/product-documentation/reports/export-report) can be found on the PlexTrac Product Documentation site.
 
     Query Parameters:
     includeEvidence: Include Raw Evidence in Export - example (false)

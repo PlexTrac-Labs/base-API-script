@@ -56,7 +56,9 @@ def create_user_deprecated(base_url, headers, tenantId, payload):
 
 def bulk_create_user(base_url, headers, tenantId, payload):
     """
-    Create a new user in your tenant
+    Create new users in your tenant.
+
+`role` can be one of the defaults "ADMIN", "STD_USER", or "ANALYST". For custom RBAC roles you need to find the `key` for your custom role. Then the use the pattern TENANT_\[tenant ID\]_ROLE_\[key of custom RBAC role\] e.g. "TENANT_0_ROLE_MY_CUSTOM_ROLE"
     """
     name = "Bulk Create User"
     root = "/api/v1"
@@ -83,7 +85,7 @@ def delete_user(base_url, headers, payload):
 
 def change_password(base_url, headers, payload):
     """
-    This request **changes the password** for an existing user.
+    This request **changes the password** for the user making the request. You cannot change another users password.
     """
     name = "Change Password"
     root = "/api/v1"
@@ -93,6 +95,8 @@ def change_password(base_url, headers, payload):
 def forgot_password(base_url, headers, payload):
     """
     This request **sends a password recovery email** to an existing user based on the email address provided in the query.
+
+This endpoint doesn't require authenication.
     """
     name = "Forgot Password"
     root = "/api/v1"
@@ -101,7 +105,7 @@ def forgot_password(base_url, headers, payload):
 
 def reset_user_password(base_url, headers, tenantId, payload):
     """
-    Generate a new 20-character password for a given user
+    Send an email for a user to reset their password.
     """
     name = "Reset User Password"
     root = "/api/v1"
@@ -126,25 +130,22 @@ def disable_user_mfa_token(base_url, headers):
     path = f'/user/mfa/token/disable'
     return request.put(base_url, headers, root+path, name)
 
-def disable_other_user_mfa_token(base_url, headers, tenantId, email):
+def disable_other_user_mfa_token(base_url, headers, tenantId, payload):
     """
     Disable MFA for an authorized user in your tenant
-
-    Query Parameters:
-    email: The email of the user for whom to disable MFA - example (string)
     """
     name = "Disable Other User MFA Token"
     root = "/api/v1"
-    path = f'/tenant/{tenantId}/user/mfa/disable?email={email}'
-    return request.put(base_url, headers, root+path, name)
+    path = f'/tenant/{tenantId}/user/mfa/disable'
+    return request.put(base_url, headers, root+path, name, payload)
 
 def enabledisable_user(base_url, headers, tenantId, payload):
     """
-    Toggle a user's authorization to your tenancy
+    Toggles the **User Disabled** switch shown in the Admin Dashboard > Users. This enables or disables a user from authenticating to the platform.
     """
     name = "Enable/Disable User"
     root = "/api/v1"
-    path = f'/tenant/{tenantId}/user/toggledisable'
+    path = f'/tenant/{tenantId}/user/toggledisabled'
     return request.post(base_url, headers, root+path, name, payload)
 
 def get_user_notifications(base_url, headers, limit, skip, read):
@@ -154,18 +155,18 @@ def get_user_notifications(base_url, headers, limit, skip, read):
     Query Parameters:
     limit: Integer: Num notifications to return. Default 10 - example (10)
     skip: Integer: Index of notifications to skip. Default 0 - example (0)
-    read: 'read', 'unread', 'any' - example (any)
+    read: 'read', 'unread', 'any' - example (unread)
     """
     name = "Get User Notifications"
     root = "/api/v1"
     path = f'/user/notifications?limit={limit}?skip={skip}?read={read}'
     return request.get(base_url, headers, root+path, name)
 
-def update_read_notifications(base_url, headers, payload):
+def set_user_notifications_read(base_url, headers, payload):
     """
-    Update the notifications that have been read by the current authenticated user
+    Mark a notification as read by the user.
     """
-    name = "Update Read Notifications"
+    name = "Set User Notifications Read"
     root = "/api/v1"
     path = f'/user/notifications'
     return request.put(base_url, headers, root+path, name, payload)

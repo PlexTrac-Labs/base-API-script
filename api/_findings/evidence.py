@@ -1,8 +1,19 @@
 from utils import request_handler as request
 
+def get_scanner_output(base_url, headers, clientId, reportId, findingId, assetId):
+    """
+    No description in Postman
+    """
+    name = "Get Scanner Output"
+    root = "/api/v1"
+    path = f'/client/{clientId}/report/{reportId}/flaw/{findingId}/asset/{assetId}/scanoutput'
+    return request.get(base_url, headers, root+path, name)
+
 def bulk_get_evidence(base_url, headers, tenantId, clientId, reportId, findingId, payload):
     """
-    This request **retrieves evidence information** for a specific finding for a specific report.
+    Deprecated: Please use **GET Get Scanner Output**
+
+This request **retrieves evidence information** for a specific finding for a specific report.
     """
     name = "Bulk Get Evidence"
     root = "/api/v2"

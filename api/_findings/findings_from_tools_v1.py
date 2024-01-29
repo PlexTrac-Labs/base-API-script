@@ -1,8 +1,8 @@
 from utils import request_handler as request
 
-def add_findings_from_file_imports(base_url, headers, clientId, reportId, source, payload):
+def add_findings_from_file_imports_v1(base_url, headers, clientId, reportId, source, payload):
     """
-    source must be from the following list:
+    `source` must be from the following list:
 
 acunetix  
 burp  
@@ -30,7 +30,7 @@ rapidfire
 scythe  
 veracode
     """
-    name = "Add Findings from File Imports"
+    name = "Add Findings from File Imports V1"
     root = "/api/v1"
     path = f'/client/{clientId}/report/{reportId}/import/{source}'
     return request.post(base_url, headers, root+path, name, payload)

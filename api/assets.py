@@ -68,13 +68,13 @@ def list_client_assets(base_url, headers, clientId):
     path = f'/client/{clientId}/assets'
     return request.get(base_url, headers, root+path, name)
 
-def list_report_assets(base_url, headers, reportId):
+def list_report_assets(base_url, headers, clientId, reportId):
     """
     This request **retrieves a list of assets for a specific report.**
     """
     name = "List Report Assets"
-    root = "/api/{{clientId}}"
-    path = f'/reports/{reportId}/assets'
+    root = "/api/v2"
+    path = f'/clients/{clientId}/reports/{reportId}/assets'
     return request.get(base_url, headers, root+path, name)
 
 def get_asset(base_url, headers, clientId, assetId):
@@ -125,7 +125,7 @@ def delete_asset(base_url, headers, clientId, assetId):
 
 def import_client_assets_v1(base_url, headers, clientId, source, payload):
     """
-    Deprecated. Please use [https://api-docs.plextrac.com/#f77e7699-7ccb-4d80-b74b-d516350ee8cc](https://api-docs.plextrac.com/#f77e7699-7ccb-4d80-b74b-d516350ee8cc)
+    Deprecated. Please use [Import Client Assets v2](https://api-docs.plextrac.com/#572a3a48-f168-4089-9049-e60b559e48a4)
     """
     name = "Import Client Assets v1"
     root = "/api/v1"
@@ -144,7 +144,7 @@ The source must be from the supported list below:
 
 Includes support for a csv. Must use the schema described here:
 
-[https://docs.plextrac.com/plextrac-documentation/product-documentation/clients/adding-assets-in-clients](https://docs.plextrac.com/plextrac-documentation/product-documentation/clients/adding-assets-in-clients)
+[Adding Assets in Clients](https://docs.plextrac.com/plextrac-documentation/product-documentation/clients/adding-assets-in-clients)
 
 When importing a csv file, the endpoint response contains the field `result`, which is the list of newly created asset ID strings. This list is the same order as the assets in the csv file that was used in the request.
 
@@ -160,21 +160,12 @@ def bulk_delete_client_assets(base_url, headers, clientId, payload):
     """
     This requests deletes the Client Assets sent in the payload.
 
-IMPORTANT: This will not unlink and finding that are currently affecting the assets to be deleted. Before calling this endpoint you must use the [DELETE Remove Affected Asset from Flaw](https://api-docs.plextrac.com/#45198986-d6c2-45a9-8411-cbafab565d0e) endpoint to unlink all findings affecting the assets to be deleted.
+IMPORTANT: This will not unlink and finding that are currently affecting the assets to be deleted. Before calling this endpoint you must use the [DELETE Remove Affected Asset from Flaw](https://api-docs.plextrac.com/#1525dad4-393e-4ba9-b853-60b9026e8b96) endpoint to unlink all findings affecting the assets to be deleted.
     """
     name = "Bulk Delete Client Assets"
     root = "/api/v1"
     path = f'/client/{clientId}/bulk/assets/delete'
     return request.post(base_url, headers, root+path, name, payload)
-
-def remove_affected_asset_from_flaw(base_url, headers, clientId, reportId, findingId, assetId):
-    """
-    No description in Postman
-    """
-    name = "Remove Affected Asset from Flaw"
-    root = "/api/v1"
-    path = f'/client/{clientId}/report/{reportId}/flaw/{findingId}/asset/{assetId}'
-    return request.delete(base_url, headers, root+path, name)
 
 def get_scanner_output(base_url, headers, clientId, reportId, findingId, assetId):
     """
@@ -184,21 +175,3 @@ def get_scanner_output(base_url, headers, clientId, reportId, findingId, assetId
     root = "/api/v1"
     path = f'/client/{clientId}/report/{reportId}/flaw/{findingId}/asset/{assetId}/scanoutput'
     return request.get(base_url, headers, root+path, name)
-
-def get_affected_asset_status_list(base_url, headers, clientId, reportId, findingId, assetId):
-    """
-    No description in Postman
-    """
-    name = "Get Affected Asset Status List"
-    root = "/api/v1"
-    path = f'/client/{clientId}/report/{reportId}/flaw/{findingId}/asset/{assetId}/status'
-    return request.get(base_url, headers, root+path, name)
-
-def create_affected_asset_status(base_url, headers, clientId, reportId, findingId, assetId):
-    """
-    No description in Postman
-    """
-    name = "Create Affected Asset Status"
-    root = "/api/v1"
-    path = f'/client/{clientId}/report/{reportId}/flaw/{findingId}/asset/{assetId}/status/update'
-    return request.post(base_url, headers, root+path, name)

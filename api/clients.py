@@ -64,7 +64,7 @@ def get_client(base_url, headers, clientId):
 
 The `instanceUrl` and `clientId` is needed to execute the call.
 
-A successsfull call returns the JSON object of the cient stored in hte DB. See [Client Object](https://docs.plextrac.com/plextrac-documentation/master/plextrac-api/object-structures/client-object) for deatils on how this JSON is structured
+A successsfull call returns the JSON object of the cient stored in the DB. See [Client Object](https://docs.plextrac.com/plextrac-documentation/master/plextrac-api/object-structures/client-object) for deatils on how this JSON is structured
     """
     name = "Get Client"
     root = "/api/v1"

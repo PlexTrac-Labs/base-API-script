@@ -12,6 +12,8 @@ def list_report_templates(base_url, headers, tenantId):
 def get_report_template(base_url, headers, tenantId, reportTemplateId):
     """
     This request **retrieves a specific report template** within a tenant.
+
+Please see our public docs for more information about how [Report Templates](https://docs.plextrac.com/plextrac-documentation/product-documentation-1/account-management/account-admin/customizations/templates/report-templates) fit into the process of exporting a report.
     """
     name = "Get Report Template"
     root = "/api/v1"

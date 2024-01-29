@@ -145,16 +145,9 @@ def create_client_assessment(base_url, headers, tenantId, clientId, payload):
 
 The `instanceUrl` , `tenantId` and `clientId` is needed to execute the call.
 
-**NOTE:** It is recommended to first obtain the questionnaire and view the JSON structure needed for the specific assessment.
+**NOTE:** This endpoint is meant to create a new Client Assessment from an existing Questionnaire. To reopen a completed Client Assessment see [Copy Client Assessment](https://api-docs.plextrac.com/#32db8121-7206-495c-92af-8f563eb33e7a)
 
-**NOTE:** This endpoint is meant to create a new Client Assessment from an existing Questionnaire. To reopen a completed Client Assessment see [Copy Client Assessment](https://api-docs.plextrac.com/#499773c6-7a7a-4188-946d-3f1921bcfc7f)
-
-Below is returned on a successful call:
-
-| **parameter** | **definition** | **example value** |
-| --- | --- | --- |
-| message | validation of request | success |
-| doc_id | generated assessment ID | assessment_3458_tenant_0_client_1912 |
+**NOTE:** It is recommended that the optional field `saveOnly` is set to `True`. This field detemines whether to just save the newly created Client Assesment or add all current answers in the response. If the `answers` field sent in the payload was an empty array, the answers returned will just be the default empty values from the Questionnaire. This makes the response unnecessarily long depending on the number of questions in the assessment.
     """
     name = "Create Client Assessment"
     root = "/api/v1"
@@ -166,6 +159,8 @@ def update_client_assessment(base_url, headers, tenantId, clientId, assessmentId
     This request **updates** an assessment.
 
 The `instanceUrl` , `tenantId`, `assessmentId` and `clientId` is needed to execute the call.
+
+The assessment is considered "In Progress" or "Completed" based the presence and value of the `completed_at` property. To mark an assessment complete, update the assessment to have a `completed_at` property containing a timestamp in milliseconds.
     """
     name = "Update Client Assessment"
     root = "/api/v1"
@@ -196,9 +191,9 @@ def create_report_from_assessment_questionnaire(base_url, headers, tenantId, cli
     """
     This request will **create a report** from assessments for a client.
 
-The `instanceUrl` , `tenantId`, `assessmentId` and `clientId` is needed to execute the call.
+The `instanceUrl` , `tenantId`, `assessmentId`, `clientId` and `questionnaireId` is needed to execute the call.
 
-Using this endpoint will not delete the assessment.
+Using this endpoint will not mark the assessment completed, but only create a report based on the current state of the assessment. Whether an assessment is completed or not is a property of the assessment object. It is determined by the presence and value of the `completed_at` property on the assessment.
 
 Leaving the 'answers' value blank will submit the answers currently on the assessment. Use other endpoints to change an assessment question's answers **before** using this call, if answers need to be modified.
 

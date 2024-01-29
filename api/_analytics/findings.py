@@ -18,15 +18,6 @@ def retreive_analytics_findings_aging(base_url, headers, payload):
     path = f'/clients/analytics/findings/aging'
     return request.post(base_url, headers, root+path, name, payload)
 
-def get_analytics_bootstrap_findings(base_url, headers, payload):
-    """
-    This request retrieves **asset** **analytics on findings** per client.
-    """
-    name = "Get Analytics Bootstrap Findings"
-    root = "/api/v1"
-    path = f'/clients/analytics/bootstrap'
-    return request.get(base_url, headers, root+path, name, payload)
-
 def get_finding_analytics_bootstrap(base_url, headers, payload):
     """
     StartFragment
