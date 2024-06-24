@@ -80,6 +80,24 @@ def user_list(msg: str, retry_msg: str = "", range: int = 0) -> int:
         return user_list(msg, retry_msg, range)
 
 
+def continue_check(msg: str) -> bool:
+    """
+    Prompts a user whether they want to continue, by adding the string " Continue? (y/n)"
+    to the end of the `msg` passed in. This is similar to continue_anyways, but doesn't
+    mean something bad might happen. This can be used for general checkpoints in a script.
+
+    :param msg: message to display with the prompt
+    :type msg: str
+    :return: True if user types "y" else False
+    :rtype: bool
+    """    
+    entered = input(prompt_prefix + msg + " Continue? (y/n)" + prompt_suffix)
+    if entered == 'y':
+        return True
+    else:
+        return False
+
+
 def continue_anyways(msg: str) -> bool:
     """
     Prompts a user whether they want to continue despite a potentially problematic input,
@@ -185,7 +203,12 @@ def load_csv_data(msg: str, csv_file_path: str = "") -> LoadedCSVData:
             return load_csv_data(msg)
 
     try:
-        with open(csv_file_path, 'r', newline='', encoding='utf-8') as f:  # if running into errors with reading a loaded csv, check the encoding
+        # if running into errors with reading a loaded csv, check the encoding
+        #
+        # changed default encoding from 'utf-8' to 'utf-8-sig'. This generally
+        # works better when the input is either a CSV vs a UTF-8 CSV. Should
+        # remove the BOM char '\ufeff' from the beginning of the first cell value
+        with open(csv_file_path, 'r', newline='', encoding='utf-8-sig') as f:
             reader = csv.reader(f)
 
             csv_complete = []
@@ -194,6 +217,15 @@ def load_csv_data(msg: str, csv_file_path: str = "") -> LoadedCSVData:
                 csv_complete.append(row)
 
             csv_headers = csv_complete[0]
+
+            # depending on encoding, empty cells at the end of a row might be counted as empty strings "" or not added
+            # (i.e. each row of the CSV might be a different length array)
+            # the following processing makes sure each row of the CSV is the same length
+            for row in csv_complete[1:]:
+                if len(row) < len(csv_headers):
+                    for i in range(len(csv_headers) - len(row)):
+                        row.append("")
+                        
             csv_data = csv_complete[1:]
 
             return LoadedCSVData(file_path=csv_file_path, csv=csv_complete, headers=csv_headers, data=csv_data)
