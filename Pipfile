@@ -9,6 +9,7 @@ verify_ssl = true
 requests = "*"
 pyyaml = "*"
 python-dateutil = "*"
+beaupy = "*"
 
 [requires]
 python_version = "3"

@@ -153,6 +153,24 @@ def put(base_url: str, headers: dict, endpoint: str, name: str, data: Dict = Non
     """  
     return _do(http_method='PUT', base_url=base_url, headers=headers, endpoint=endpoint, name=name, data=data)
     
+def patch(base_url: str, headers: dict, endpoint: str, name: str, data: Dict = None) -> PTWrapperLibraryResponse:
+    """
+    PATCH request wrapper
+    :param base_url: URL to PT instance including protocol (ex. https://example.plextrac.com)
+    :type base_url: str
+    :param headers: dictionary of request headers
+    :type headers: dict
+    :param endpoint: endpoint will be concatenated to `base_url` as the URL to send the request to
+    :type endpoint: str
+    :param name: name of API endpoint, mentioned during exceptions
+    :type name: str
+    :param data: request payload, defaults to None
+    :type data: Dict, optional
+    :return: custom wrapper for Python requests.Response object
+    :rtype: PTWrapperLibraryResponse
+    """  
+    return _do(http_method='PATCH', base_url=base_url, headers=headers, endpoint=endpoint, name=name, data=data)
+
 def delete(base_url: str, headers: dict, endpoint: str, name: str, data: Dict = None) -> PTWrapperLibraryResponse:
     """
     DELETE request wrapper

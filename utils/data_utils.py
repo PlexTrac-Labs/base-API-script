@@ -1,4 +1,7 @@
 from copy import deepcopy
+import time
+
+import beaupy as binput
 
 import utils.log_handler as logger
 log = logger.log
@@ -6,7 +9,19 @@ from utils.auth_handler import Auth
 import utils.input_utils as input
 import api
 
-def get_page_of_clients(page: int = 0, clients: list = [], total_clients: int = -1, auth:Auth=None) -> bool:
+def format_duration(seconds: float) -> str:
+    """Format seconds into human-readable string like 0h0m0s"""
+    if seconds < 60:
+        return f"{int(seconds)}s"
+    minutes = int(seconds // 60)
+    remaining_seconds = int(seconds % 60)
+    if minutes < 60:
+        return f"{minutes}m{remaining_seconds}s"
+    hours = minutes // 60
+    remaining_minutes = minutes % 60
+    return f"{hours}h{remaining_minutes}m{remaining_seconds}s"
+
+def get_page_of_clients(page: int = 0, clients: list = [], total_clients: int = -1, auth:Auth=None, _start_time: float = None, _spinner: binput.spinners.Spinner = None) -> bool:
     """
     Handles traversing pagination results to create a list of all items.
 
@@ -82,25 +97,48 @@ def get_page_of_clients(page: int = 0, clients: list = [], total_clients: int = 
     #     }
     # }
     # endregion
+    is_first_call = page == 0
+    if is_first_call:
+        _start_time = time.time()
+        _spinner = binput.spinners.Spinner(binput.spinners.DOTS, "Loading clients...")
+        _spinner.start()
+    
     try:
         response = api.clients.list_clients(auth.base_url, auth.get_auth_headers(), payload)
         if response.json.get("status") != "success":
             log.exception(f'Could not retrieve clients from instance')
+            if _spinner:
+                _spinner.stop()
             return False
     except Exception as e:
         log.exception(e)
+        if _spinner:
+            _spinner.stop()
         return False
     
     total_clients = int(response.json['meta']['pagination']['total'])
     if len(response.json['data']) > 0:
         clients += deepcopy(response.json['data'])
-
-    if len(clients) < total_clients:
-        return get_page_of_clients(page+1, clients, total_clients, auth=auth)
     
+    elapsed = time.time() - _start_time
+    items_loaded = len(clients)
+    if items_loaded > 0 and items_loaded < total_clients:
+        _spinner.stop()
+        avg_time_per_item = elapsed / items_loaded
+        remaining_items = total_clients - items_loaded
+        eta_seconds = avg_time_per_item * remaining_items
+        eta_str = format_duration(eta_seconds)
+        _spinner = binput.spinners.Spinner(binput.spinners.DOTS, f"Loading clients... {items_loaded}/{total_clients} ({eta_str} remaining)")
+        _spinner.start()
+    
+    if len(clients) < total_clients:
+        return get_page_of_clients(page+1, clients, total_clients, auth=auth, _start_time=_start_time, _spinner=_spinner)
+    
+    if _spinner:
+        _spinner.stop()
     return True
 
-def get_page_of_reports(page: int, reports: list = [], total_reports: int = -1, auth:Auth=None) -> None:
+def get_page_of_reports(page: int, reports: list = [], total_reports: int = -1, auth:Auth=None, _start_time: float = None, _spinner: binput.spinners.Spinner = None) -> None:
     """
     Handles traversing pagination results to create a list of all items.
 
@@ -204,25 +242,48 @@ def get_page_of_reports(page: int, reports: list = [], total_reports: int = -1, 
     # }
 
     # endregion
+    is_first_call = page == 0
+    if is_first_call:
+        _start_time = time.time()
+        _spinner = binput.spinners.Spinner(binput.spinners.DOTS, "Loading reports...")
+        _spinner.start()
+    
     try:
         response = api.reports.get_report_list(auth.base_url, auth.get_auth_headers(), payload)
         if response.json['status'] != "success":
             log.exception(f'Could not retrieve reports from instance')
+            if _spinner:
+                _spinner.stop()
             return False
     except Exception as e:
         log.exception(e)
+        if _spinner:
+            _spinner.stop()
         return False
     
     total_reports = int(response.json['meta']['pagination']['total'])
     if len(response.json['data']) > 0:
         reports += deepcopy(response.json['data'])
+    
+    elapsed = time.time() - _start_time
+    items_loaded = len(reports)
+    if items_loaded > 0 and items_loaded < total_reports:
+        _spinner.stop()
+        avg_time_per_item = elapsed / items_loaded
+        remaining_items = total_reports - items_loaded
+        eta_seconds = avg_time_per_item * remaining_items
+        eta_str = format_duration(eta_seconds)
+        _spinner = binput.spinners.Spinner(binput.spinners.DOTS, f"Loading reports... {items_loaded}/{total_reports} ({eta_str} remaining)")
+        _spinner.start()
 
     if len(reports) < total_reports:
-        return get_page_of_reports(page+1, reports, total_reports, auth=auth)
+        return get_page_of_reports(page+1, reports, total_reports, auth=auth, _start_time=_start_time, _spinner=_spinner)
     
+    if _spinner:
+        _spinner.stop()
     return True
 
-def get_page_of_assets(page: int = 0, assets: list = [], total_assets: int = -1, auth:Auth=None) -> None:
+def get_page_of_assets(page: int = 0, assets: list = [], total_assets: int = -1, auth:Auth=None, _start_time: float = None, _spinner: binput.spinners.Spinner = None) -> None:
     """
     Handles traversing pagination results to create a list of all items.
 
@@ -317,25 +378,48 @@ def get_page_of_assets(page: int = 0, assets: list = [], total_assets: int = -1,
     # }
 
     # endregion
+    is_first_call = page == 0
+    if is_first_call:
+        _start_time = time.time()
+        _spinner = binput.spinners.Spinner(binput.spinners.DOTS, "Loading assets...")
+        _spinner.start()
+    
     try:
         response = api.assets.get_tenant_assets(auth.base_url, auth.get_auth_headers(), payload)
         if response.json['status'] != "success":
             log.exception(f'Could not retrieve assets from instance')
+            if _spinner:
+                _spinner.stop()
             return False
     except Exception as e:
         log.exception(e)
+        if _spinner:
+            _spinner.stop()
         return False
     
     total_assets = int(response.json['meta']['pagination']['total'])
     if len(response.json['assets']) > 0:
         assets += deepcopy(response.json['assets'])
+    
+    elapsed = time.time() - _start_time
+    items_loaded = len(assets)
+    if items_loaded > 0 and items_loaded < total_assets:
+        _spinner.stop()
+        avg_time_per_item = elapsed / items_loaded
+        remaining_items = total_assets - items_loaded
+        eta_seconds = avg_time_per_item * remaining_items
+        eta_str = format_duration(eta_seconds)
+        _spinner = binput.spinners.Spinner(binput.spinners.DOTS, f"Loading assets... {items_loaded}/{total_assets} ({eta_str} remaining)")
+        _spinner.start()
 
     if len(assets) < total_assets:
-        return get_page_of_assets(page+1, assets, total_assets, auth=auth)
+        return get_page_of_assets(page+1, assets, total_assets, auth=auth, _start_time=_start_time, _spinner=_spinner)
     
+    if _spinner:
+        _spinner.stop()
     return True
 
-def get_page_of_report_findings(client_id: int, report_id: int, page: int = 0, findings: list = [], total_findings: int = -1, auth:Auth=None) -> bool:
+def get_page_of_report_findings(client_id: int, report_id: int, page: int = 0, findings: list = [], total_findings: int = -1, auth:Auth=None, _start_time: float = None, _spinner: binput.spinners.Spinner = None) -> bool:
     """
     Handles traversing pagination results to create a list of all finding in a report.
 
@@ -633,24 +717,105 @@ def get_page_of_report_findings(client_id: int, report_id: int, page: int = 0, f
     # }
 
     # endregion
+    is_first_call = page == 0
+    if is_first_call:
+        _start_time = time.time()
+        _spinner = binput.spinners.Spinner(binput.spinners.DOTS, "Loading findings...")
+        _spinner.start()
+    
     try:
         response = api.findings.get_findings_by_report(auth.base_url, auth.get_auth_headers(), client_id, report_id, payload)
         if response.json['status'] != "success":
             log.exception(f'Could not retrieve findings from report')
+            if _spinner:
+                _spinner.stop()
             return False
     except Exception as e:
         log.exception(e)
+        if _spinner:
+            _spinner.stop()
         return False
     
     total_findings = int(response.json['meta']['pagination']['total'])
     if len(response.json['data']) > 0:
         findings += deepcopy(response.json['data'])
+    
+    elapsed = time.time() - _start_time
+    items_loaded = len(findings)
+    if items_loaded > 0 and items_loaded < total_findings:
+        _spinner.stop()
+        avg_time_per_item = elapsed / items_loaded
+        remaining_items = total_findings - items_loaded
+        eta_seconds = avg_time_per_item * remaining_items
+        eta_str = format_duration(eta_seconds)
+        _spinner = binput.spinners.Spinner(binput.spinners.DOTS, f"Loading findings... {items_loaded}/{total_findings} ({eta_str} remaining)")
+        _spinner.start()
 
     if len(findings) < total_findings:
-        return get_page_of_report_findings(client_id, report_id, page+1, findings, total_findings, auth=auth)
+        return get_page_of_report_findings(client_id, report_id, page+1, findings, total_findings, auth=auth, _start_time=_start_time, _spinner=_spinner)
     
+    if _spinner:
+        _spinner.stop()
     return True
 
+def get_page_of_findings(reports: list, findings: list = [], auth: Auth = None, _start_time: float = None, _spinner: binput.spinners.Spinner = None, _report_index: int = 0) -> bool:
+    """
+    Handles loading findings from all reports with pagination.
+    
+    :param reports: list of reports to load findings from
+    :type reports: list
+    :param findings: the list passed in will be added to, acts as return, defaults to []
+    :type findings: list, optional
+    :param auth: Auth object for API requests
+    :type auth: Auth
+    :return: boolean if all page requests were successful
+    :rtype: bool
+    """
+    is_first_call = _report_index == 0
+    if is_first_call:
+        _start_time = time.time()
+        _spinner = binput.spinners.Spinner(binput.spinners.DOTS, "Loading findings...")
+        _spinner.start()
+    
+    if _report_index >= len(reports):
+        if _spinner:
+            _spinner.stop()
+        return True
+    
+    report = reports[_report_index]
+    if report.get('findings', 0) == 0:
+        return get_page_of_findings(reports, findings, auth, _start_time, _spinner, _report_index + 1)
+    
+    page_findings = []
+    success = get_page_of_report_findings(
+        report['client_id'],
+        report['id'],
+        page=0,
+        auth=auth,
+        findings=page_findings
+    )
+    
+    if success:
+        findings.extend(page_findings)
+    else:
+        log.warning(f'Failed to load findings from report {report["name"]}')
+    
+    total_findings = len(findings)
+    elapsed = time.time() - _start_time
+    if total_findings > 0:
+        _spinner.stop()
+        estimated_total = 0
+        for r in reports:
+            estimated_total += r.get('findings', 0)
+        if total_findings < estimated_total:
+            avg_time_per_item = elapsed / total_findings
+            remaining_items = estimated_total - total_findings
+            eta_seconds = avg_time_per_item * remaining_items
+            eta_str = format_duration(eta_seconds)
+            _spinner = binput.spinners.Spinner(binput.spinners.DOTS, f"Loading findings... {total_findings}/{estimated_total} ({eta_str} remaining)")
+            _spinner.start()
+    
+    return get_page_of_findings(reports, findings, auth, _start_time, _spinner, _report_index + 1)
 
 def get_writeups(writeups: list = [], auth:Auth=None) -> bool:
     """
@@ -740,13 +905,128 @@ def get_writeups(writeups: list = [], auth:Auth=None) -> bool:
     # ]
 
     # endregion
+    spinner = binput.spinners.Spinner(binput.spinners.DOTS, "Loading writeups...")
+    spinner.start()
     try:
         response = api._content_library._writeupsdb.writeups.list_writeups(auth.base_url, auth.get_auth_headers())
         writeups += deepcopy(response.json)
+        spinner.stop()
         return True
     except Exception as e:
+        spinner.stop()
         log.exception(e)
         return False
+
+def get_page_of_instances(page: int = 1, instances: list = [], total_instances: int = -1, auth: Auth = None, _start_time: float = None, _spinner: binput.spinners.Spinner = None) -> bool:
+    """
+    Handles traversing pagination results to create a list of all instances.
+
+    :param page: page to start on, for all results use 1, defaults to 1
+    :type page: int, optional
+    :param instances: the list passed in will be added to, acts as return, defaults to []
+    :type instances: list, optional
+    :param total_instances: used for recursion to know when all pages have been gathered, defaults to -1
+    :type total_instances: int, optional
+    :param auth: Auth object for API requests
+    :type auth: Auth
+    :return: boolean if all page requests were successful
+    :rtype: bool
+    """
+    page_size = 500
+    # region - full structure of instance data response
+    # {
+    #     "cuid": "cm9ln012206mc0hh8f3rp63qi",
+    #     "clientCuid": "clcm94d8c00040io2g3qnbhfe",
+    #     "tenantCuid": "cl6cg2uj201k717lb7iqj7hfn",
+    #     "clientFindingCuid": "cm9ln011h06mb0hh845546gdk",
+    #     "assetCuid": "clvr7kww700ot0hphdsr436xp",
+    #     "activeRevisionTimestamp": "2025-04-17T17:31:11.142Z",
+    #     "assignedToUserCuid": null,
+    #     "createdAt": "2025-04-17T17:31:11.142Z",
+    #     "customFields": [],
+    #     "cveStrings": [
+    #         "CVE-1999-0624"
+    #     ],
+    #     "cweStrings": null,
+    #     "description": "The RPC rstatd daemon enables the Administrator to monitor the host's load average from a remote system using the &quot;rup&quot; command line.  It discloses other sensitive information, including the time at which the machine was booted, the current time of the host, the number of packets sent and received from the ethernet interface.\nUnauthorized users can check the system load to establish when attacks against the host are most likely to be successful.  Since a low host load average indicates that the system is idle, the attack is less likely to be noticed by the System Administrator when the host load average is low.  \nOn SunOS, the length of time that the host takes to boot may also be of interest to unauthorized users since this value is sometimes used to generate ID or tokens internally.\n",
+    #     "earliestRawObservationCuid": "cm9lmzz5a065b0hh8ejnrg8os",
+    #     "earliestRawObservationTimestamp": "2025-04-11T16:31:37.365Z",
+    #     "isSeverityCalculated": false,
+    #     "latestRawObservationCuid": "cm9lmzz5a065b0hh8ejnrg8os",
+    #     "latestRawObservationTimestamp": "2025-04-11T16:31:37.365Z",
+    #     "locationUrl": null,
+    #     "ports": {},
+    #     "recommendations": "Unless it is required on this system, remove the rstatd daemon from the list of default RPC programs run on boot.",
+    #     "references": "<p><ul><br /><li><a href='http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-1999-0624'>CVE-1999-0624</a></li><br /></ul></p>",
+    #     "scores": {
+    #         "CVSS2": {
+    #             "score": 0,
+    #             "vector": ""
+    #         }
+    #     },
+    #     "selectedScore": "cvss2",
+    #     "severity": 3,
+    #     "status": "Open",
+    #     "substatusCuid": null,
+    #     "substatusValue": null,
+    #     "tags": [],
+    #     "title": "\"rstatd\" RPC Service System Information Disclosure Vulnerability",
+    #     "toolSources": [
+    #         "Qualys"
+    #     ],
+    #     "vulnerableParameters": [],
+    #     "artifacts": {
+    #         "evidence": [
+    #             {
+    #                 "caption": "Detailed results for demo05.s02.sjc01.qualys.com (64.41.200.235)",
+    #                 "file_name": "3c2cce1a39388a1b5083865790667e9634d71eac916f91084b58855ac21327d4.txt"
+    #             },
+    #             {
+    #                 "caption": "Detailed results for demo05.s02.sjc01.qualys.com (64.41.200.235)",
+    #                 "file_name": "3c2cce1a39388a1b5083865790667e9634d71eac916f91084b58855ac21327d4.txt"
+    #             }
+    #         ],
+    #         "exhibits": [],
+    #         "codeSamples": []
+    #     },
+    #     "lastUpdatedAt": "2025-04-17T17:31:11.142Z"
+    # }
+    # endregion
+    is_first_call = page == 1
+    if is_first_call:
+        _start_time = time.time()
+        _spinner = binput.spinners.Spinner(binput.spinners.DOTS, "Loading instances...")
+        _spinner.start()
+    
+    try:
+        response = api._ctem.instance.list_instances(auth.base_url, auth.get_auth_headers(), page_size=page_size, page_number=page)
+    except Exception as e:
+        log.exception(e)
+        if _spinner:
+            _spinner.stop()
+        return False
+    
+    total_instances = int(response.json.get('total', 0))
+    if len(response.json.get('data', [])) > 0:
+        instances += deepcopy(response.json['data'])
+    
+    elapsed = time.time() - _start_time
+    items_loaded = len(instances)
+    if items_loaded > 0 and items_loaded < total_instances:
+        _spinner.stop()
+        avg_time_per_item = elapsed / items_loaded
+        remaining_items = total_instances - items_loaded
+        eta_seconds = avg_time_per_item * remaining_items
+        eta_str = format_duration(eta_seconds)
+        _spinner = binput.spinners.Spinner(binput.spinners.DOTS, f"Loading instances... {items_loaded}/{total_instances} ({eta_str} remaining)")
+        _spinner.start()
+
+    if len(instances) < total_instances:
+        return get_page_of_instances(page+1, instances, total_instances, auth=auth, _start_time=_start_time, _spinner=_spinner)
+    
+    if _spinner:
+        _spinner.stop()
+    return True
 
 def get_client_choice(clients) -> int:
     """
