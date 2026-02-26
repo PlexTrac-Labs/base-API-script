@@ -6,8 +6,7 @@ log = logger.log
 from utils.auth_handler import Auth
 import utils.input_utils as input
 
-
-if __name__ == '__main__':
+def main():
     for i in settings.script_info:
         print(i)
 
@@ -187,3 +186,6 @@ if __name__ == '__main__':
 
     There are a handful of helpful functions in the general_utils.py file. These mostly involve data sanitation or validation
     """
+
+if __name__ == '__main__':
+    main()
