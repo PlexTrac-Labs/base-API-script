@@ -36,6 +36,7 @@ The following values can either be added to the `config.yaml` file or entered wh
 - PlexTrac Top Level Domain e.g. https://yourapp.plextrac.com
 - Username
 - Password
+- Client ID (optional): used by the example `get_client` call; if omitted, the script uses the first client you have access to
 
 ## Script Execution Flow
 - Starts executing the main.py file
