@@ -69,8 +69,26 @@ def main():
     """
     import api
 
-    client_id = "<id_of_client>"
-    response = api.clients.get_client(auth.base_url, auth.get_auth_headers(), client_id)
+    # Get a real client ID: from config, or list clients first to pick one
+    client_id = args.get('client_id')
+    if not client_id:
+        clients_response = api.clients.list_tenant_clients(auth.base_url, auth.get_auth_headers(), auth.tenant_id)
+        if clients_response and 200 <= clients_response.status_code < 300:
+            clients = clients_response.json
+            # Response shape varies; extract first client id (e.g. from doc_id or data)
+            if isinstance(clients, list) and clients:
+                first = clients[0]
+                client_id = first.get('doc_id', [first.get('id')])[0] if isinstance(first, dict) else first
+            elif isinstance(clients, dict) and clients.get('data'):
+                client_id = clients['data'][0].get('doc_id', [clients['data'][0].get('id')])[0]
+            else:
+                client_id = None
+        else:
+            client_id = None
+        if not client_id:
+            log.warning("No clients found. Add client_id to config.yaml or ensure your user has access to clients.")
+    if client_id:
+        response = api.clients.get_client(auth.base_url, auth.get_auth_headers(), client_id)
 
 
     """
